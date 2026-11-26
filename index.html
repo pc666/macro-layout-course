@@ -1,0 +1,406 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="从第一颗 SRAM 到独立评审的中文 macro 布局课程，含公开 DEF 和可操作的拥塞实验。"><title>Macro 布局手册 · 从 SRAM 到工程评审</title><style>
+:root{color-scheme:light;--ink:#182e32;--muted:#526765;--teal:#095c56;--accent:#b25430;--line:#cdd7cf;--paper:#faf9f4;--side:#eeefe7;--ghost:#e2ece2;--dark:#102e32;--mono:"IBM Plex Mono","Cascadia Mono",Consolas,monospace;font-family:"Source Sans 3","Microsoft YaHei","PingFang SC",system-ui,sans-serif}*{box-sizing:border-box}html{scroll-behavior:auto}body{margin:0;background:var(--paper);color:var(--ink)}button,select,input,textarea{font:inherit;color:inherit}button,select{cursor:pointer}button{background:#fffdf7;border:1px solid #aebfb3;border-radius:6px;padding:.48rem .77rem;line-height:1.4}button:hover,button:focus-visible,select:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible,canvas:focus-visible{outline:2px solid #178077;outline-offset:2px}button:disabled{cursor:default;opacity:.52}button[aria-pressed=true],.active-choice{background:var(--teal);border-color:var(--teal);color:white}a{color:var(--teal);text-underline-offset:3px}.shell{max-width:1420px;margin:auto;display:grid;grid-template-columns:265px minmax(0,1fr);min-height:100vh}.rail{border-right:1px solid var(--line);background:var(--side);height:100vh;position:sticky;top:0;overflow-y:auto;padding:27px 17px 20px;scrollbar-width:thin}.brand{display:flex;align-items:center;gap:10px;font-weight:750;font-size:1rem;letter-spacing:.015em}.mark{display:inline-grid;grid-template-columns:repeat(3,5px);grid-template-rows:repeat(3,5px);gap:2px;background:var(--dark);padding:7px;border-radius:5px;flex:none}.mark i{background:#95bca5}.mark i:nth-child(2),.mark i:nth-child(4){background:#e9ba7b}.mark i:nth-child(7){opacity:.3}.progressnote{font-family:var(--mono);font-size:.74rem;color:var(--muted);margin:17px 0 6px}.track{background:#d3ddd1;overflow:hidden;height:4px;border-radius:4px}.track span{display:block;height:100%;background:#398070}.navgroup{margin:20px 0 5px 6px;color:var(--muted);font-size:.76rem;font-weight:700}.toc a{display:flex;align-items:baseline;gap:9px;text-decoration:none;color:#344a48;font-size:.85rem;line-height:1.45;padding:7px 6px;border-left:3px solid transparent;border-radius:0 4px 4px 0}.toc a[aria-current=page]{background:#d7e6d9;border-left-color:var(--teal);font-weight:750;color:var(--teal)}.ix,.lesson-no{font-family:var(--mono);font-size:.76rem;letter-spacing:.06em}.ix{color:#687976;min-width:20px}.toc a.done .ix{color:var(--teal);font-weight:bold}.reading{min-width:0}.top{border-bottom:1px solid var(--line);padding:13px clamp(20px,5vw,70px);display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.85rem}.top b{color:var(--ink)}.mobilebar{display:none}.page{max-width:875px;margin:auto;padding:clamp(26px,4vw,60px) clamp(18px,5vw,64px) 50px}.lesson-no{color:var(--teal);font-weight:750}.lesson h1{font-size:clamp(2.05rem,4vw,3.55rem);line-height:1.17;letter-spacing:-.055em;margin:12px 0;overflow-wrap:anywhere}.lead{font-size:clamp(1.08rem,2vw,1.35rem);color:var(--muted);line-height:1.6;margin:0 0 26px}.body,.quiz,.source,.answers{font-size:1rem;line-height:1.9;overflow-wrap:anywhere}.body h3,.quiz h3{font-size:1.18rem;line-height:1.45;letter-spacing:-.015em;margin:24px 0 8px}.body p{margin:10px 0 16px}.body b,.body strong{color:#103f3f}.body ol,.body ul{padding-left:1.55em}.body li{margin:.5em 0}.pairs{margin:12px 0}.pairs dt{font-weight:700;color:var(--teal);margin-top:12px}.pairs dd{margin:3px 0 12px}.case+.case{border-top:1px solid var(--line)}.body details,.source{border-block-start:1px solid var(--line);margin:17px 0 7px;padding:10px 0;color:#425653}.body summary,.source summary{cursor:pointer;font-weight:650}.source a{display:block;font-size:.9rem}.quiz{padding:18px clamp(13px,3vw,23px);background:#e8efe6;border-radius:8px;margin-top:28px}.quiz h3{margin:0 0 6px}.choices{display:flex;gap:7px;flex-wrap:wrap}.choices button{text-align:left;font-size:.94rem}.feedback{margin:9px 0 0;font-weight:600;line-height:1.6;color:#28554e}.feedback.wrong,.warn{color:#873e22}.paging{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:16px;margin-top:24px;flex-wrap:wrap}.primary{background:var(--teal);border-color:var(--teal);color:white}.muted,.caption,figcaption,small{color:var(--muted);font-size:.86rem;line-height:1.6}.body code,pre{font-family:var(--mono);font-size:.9em}.body code{overflow-wrap:anywhere}pre{background:#e6ece6;padding:14px;border-radius:6px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;margin:15px 0;font-size:.94rem}caption{text-align:left;font-weight:650}td,th{text-align:left;padding:7px 5px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.panel{background:#fffef9;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:19px 0}.panel-body{padding:15px}.panel h3{margin:0 0 8px}.diagram{background:var(--dark);color:#e5f4ed;padding:clamp(15px,3vw,24px);border-radius:8px}.diagram-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.diagram-head span{font:12px var(--mono);color:#b1cdc3}.diagram-head strong,.diagram b{color:#f6e6bf}.boardview{position:relative}.die{background-color:#173c3d;background-image:linear-gradient(#adc4ad11 1px,transparent 1px),linear-gradient(90deg,#adc4ad11 1px,transparent 1px);background-size:16px 16px;border:1px solid #718c7a;border-radius:5px;padding:23px 12px;display:grid;grid-template-columns:1fr 26px 1.35fr;align-items:center;text-align:center;min-height:153px}.controller{display:grid;place-items:center;background:#30585a;border:1px solid #8aa9a2;min-height:65px;border-radius:4px;font-size:.86rem}.bus{height:10px;border-block:2px solid #e8bc74}.banks{display:grid;grid-template-columns:1fr 1fr;gap:7px}.banks span{display:grid;place-items:center;border:1px solid #a7d1b2;border-radius:2px;background:repeating-linear-gradient(0deg,#497760 0px,#497760 2px,#56846c 2px,#56846c 4px);min-height:38px;color:#fff;font:600 .85rem var(--mono)}.banks.one{grid-template-columns:1fr}.banks.one span{min-height:78px}.controls{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0}.controls label,.fieldlabel{display:block;font-size:.86rem;font-weight:650}.controls select,.panel select{padding:7px 9px;max-width:100%;background:#fff;border:1px solid #acbdb4;border-radius:4px}.panel label select{display:block}.plot{display:block;width:100%;height:auto;touch-action:manipulation;background:#143638;border-radius:7px}.realgrid{display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,1fr);gap:14px;align-items:start}.realinfo{line-height:1.55}.realinfo code{font-size:.8rem;display:block;margin:7px 0;color:#184d49}.readouts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0}.metric{background:#eaf0e9;border-radius:5px;padding:7px 9px;line-height:1.4}.metric small{display:block;font-size:.76rem}.metric b{font:700 1.3rem var(--mono);color:#153e3d}.metric em{font-style:normal;display:block;font-size:.72rem;color:var(--muted)}.mini{font:600 .78rem var(--mono);color:var(--muted)}.panel textarea{width:100%;min-height:95px;border:1px solid #adbbb3;border-radius:4px;padding:8px;background:#fff;font-size:1rem}.legend{font-size:.82rem;line-height:1.6;margin:6px 0}.diagram .caption{color:#c2d6c9}.skip{position:absolute;left:-5000px}.skip:focus{left:8px;top:8px;background:white;z-index:10}.noscript{padding:1rem}.readoutlog{min-height:1.4em}.lesson[hidden]{display:none}.lesson:focus{outline:none}@media(max-width:800px){.shell{display:block}.rail{display:none}.top{display:none}.mobilebar{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--side);padding:10px 14px;border-bottom:1px solid var(--line)}.mobilebar .brand{font-size:.87rem;gap:7px}.mobilebar select{font-size:.87rem;max-width:49vw;padding:7px 4px;background:#fffef9;border-radius:5px;border:1px solid var(--line)}.mobilebar .mark{transform:scale(.86)}.page{padding:23px 16px 35px}.realgrid{grid-template-columns:1fr}.realgrid canvas{max-width:440px;margin:auto}.controls button,.quiz button,.paging button{min-height:39px}.panel-body{padding:11px}.lesson h1{font-size:2.05rem}.quiz{margin-top:18px}.body{line-height:1.85}}@media(max-width:390px){.readouts{gap:4px}.metric{padding:6px}.metric small{font-size:.7rem}.die{padding:18px 8px;grid-template-columns:1fr 14px 1.35fr}}@media print{.rail,.mobilebar,.top,.paging,.controls,.choices,.skip{display:none!important}.shell{display:block}.page{max-width:none;padding:0}.lesson[hidden],.lesson{display:block!important;break-before:page}.lesson:first-of-type{break-before:auto}.panel,.quiz{break-inside:avoid}.source{display:block}body{background:white}.quiz{padding:8px}.panel textarea{height:60px}}</style></head>
+<body><a href="#lesson-01" id="skip" class="skip">跳到本课</a><div class="shell"><aside class="rail"><span class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>Macro 布局手册</span><div id="progressnote" class="progressnote"></div><div class="track"><span id="progressfill"></span></div><nav class="toc" aria-label="课程目录"><div class="navgroup">电路入门</div><a href="#lesson-01"><span class="ix">01</span>一块缓存，四颗 SRAM</a><a href="#lesson-02"><span class="ix">02</span>哪些模块里的宏多</a><a href="#lesson-03"><span class="ix">03</span>一颗宏需要哪些文件</a><a href="#lesson-04"><span class="ix">04</span>读一张真实 SRAM 盘面</a>
+<div class="navgroup">第一次摆盘</div><a href="#lesson-05"><span class="ix">05</span>先画谁和谁通信</a><a href="#lesson-06"><span class="ix">06</span>先划出真正能摆的区域</a><a href="#lesson-07"><span class="ix">07</span>引脚朝向与通道的实际宽度</a><a href="#lesson-08"><span class="ix">08</span>工程师怎样做第一版</a>
+<div class="navgroup">验证摆放</div><a href="#lesson-09"><span class="ix">09</span>给一次试摆算账</a><a href="#lesson-10"><span class="ix">10</span>读懂一格 overflow</a><a href="#lesson-11"><span class="ix">11</span>动手改变走线瓶颈</a><a href="#lesson-12"><span class="ix">12</span>从粗摆走到签核</a>
+<div class="navgroup">工程决策</div><a href="#lesson-13"><span class="ix">13</span>从成品图学到哪一步</a><a href="#lesson-14"><span class="ix">14</span>人在摆，算法在搜什么</a><a href="#lesson-15"><span class="ix">15</span>在 RLpack 里看一次决策</a><a href="#lesson-16"><span class="ix">16</span>拥塞后处理怎样选宏</a>
+<div class="navgroup">上项目</div><a href="#lesson-17"><span class="ix">17</span>把一次试摆变成可复现实验</a><a href="#lesson-18"><span class="ix">18</span>把方法带到真实工具</a><a href="#lesson-19"><span class="ix">19</span>做一次独立布局评审</a></nav></aside><main class="reading"><div class="mobilebar"><span class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>Macro 布局手册</span><select id="mobile-nav" aria-label="跳至课程"><optgroup label="电路入门"><option value="0">01　一块缓存，四颗 SRAM</option><option value="1">02　哪些模块里的宏多</option><option value="2">03　一颗宏需要哪些文件</option><option value="3">04　读一张真实 SRAM 盘面</option></optgroup><optgroup label="第一次摆盘"><option value="4">05　先画谁和谁通信</option><option value="5">06　先划出真正能摆的区域</option><option value="6">07　引脚朝向与通道的实际宽度</option><option value="7">08　工程师怎样做第一版</option></optgroup><optgroup label="验证摆放"><option value="8">09　给一次试摆算账</option><option value="9">10　读懂一格 overflow</option><option value="10">11　动手改变走线瓶颈</option><option value="11">12　从粗摆走到签核</option></optgroup><optgroup label="工程决策"><option value="12">13　从成品图学到哪一步</option><option value="13">14　人在摆，算法在搜什么</option><option value="14">15　在 RLpack 里看一次决策</option><option value="15">16　拥塞后处理怎样选宏</option></optgroup><optgroup label="上项目"><option value="16">17　把一次试摆变成可复现实验</option><option value="17">18　把方法带到真实工具</option><option value="18">19　做一次独立布局评审</option></optgroup></select></div><div class="top"><span id="breadcrumb"></span><b id="where"></b></div><div class="page"><noscript><p>可直接顺序阅读所有课程。互动盘面和出题反馈需要启用 JavaScript。</p></noscript><article id="lesson-01" class="lesson" tabindex="-1" data-group="电路入门">
+<div class="lesson-no">第 01 课　/　电路入门</div><h1>一块缓存，四颗 SRAM</h1><p class="lead">CPU 想读地址 17，摆放工具会看到什么？</p>
+<div class="body"><p>先跟着一次读数据走。CPU 发来地址，缓存控制器判断该去哪个存储块，把地址送过去。存储块取出数据，再送回控制器。<strong>需要连线的这两个东西，在硅上各占一块地方。</strong></p>
+<div id="layers"></div>
+<h3>从功能走到实物</h3><p><b>Cache（缓存）</b>是一项功能，保存可能很快再用的数据。<b>SRAM（静态随机存取存储器）</b>是一种存这些比特的电路。<b>Hard macro（硬宏）</b>是交给这一层摆放工具的物理对象，有做好的内部版图、外形和引脚。</p>
+<p>本课的小例子里，数据容量 32 KiB，设计者用四颗 8 KiB 的 SRAM 实现它。四颗会各有一个位置。控制器的组合逻辑和寄存器则由许多小的<b>标准单元</b>组成。这里暂时省略 cache tag 与其他管理信息。</p><p>以后在图里看到 A，先问它存什么、谁读写它。答出这两件事，那个长方形就有意义了。</p></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>同一个缓存里用了 4 个 SRAM 实例，当前层单摆这几颗时要选多少个位置？</p><div class="choices"><button>1 个，cache 是一个功能</button><button>4 个，每个实例一个</button><button>32 个，容量是 32 KiB</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://eecs151.org/asic/lab3/docs/pg4-sram-and-hard-macros/" target="_blank" rel="noopener noreferrer">Berkeley 的 SRAM 与硬宏实验 ↗</a><a href="https://openlane2.readthedocs.io/en/latest/usage/using_macros.html" target="_blank" rel="noopener noreferrer">OpenLane 的硬宏与集成视图 ↗</a></details>
+</article>
+<article id="lesson-02" class="lesson" tabindex="-1" data-group="电路入门">
+<div class="lesson-no">第 02 课　/　电路入门</div><h1>哪些模块里的宏多</h1><p class="lead">看到一个模块名字，怎么猜里面大致有什么？</p>
+<div class="body"><p><strong>先找大块反复读写的数据，再确认这些数据最终映射成了什么。</strong>同一段 RTL 换一套库、综合选项或层次边界，交给 pack 的宏清单可能就变了。</p>
+<dl class="pairs"><dt>CPU 的 L1、L2 缓存</dt><dd>通常有数据数组、存地址标签的 tag 数组，以及控制逻辑。为满足容量、位宽、端口和频率，数组可能切成多个 bank（可以分开访问的分区），一个 bank 还可能拼多颗 SRAM。</dd><dt>AI 加速器和片上缓冲</dt><dd>权重、输入和中间结果都要暂存。较大的 scratchpad（由软件或控制器明确管理的片上存储）常见多颗 SRAM。计算阵列本身也可能硬化成宏。</dd><dt>译码器、仲裁器、状态机</dt><dd>主要做判断、选择、记少量状态，通常以标准单元为主。一个小 FIFO 可以用触发器实现，也可以映射到存储宏，要看深度与实现库。</dd><dt>PLL、模拟接口、SerDes</dt><dd>PLL 产生或调整时钟。SerDes 收发高速串行数据。实现可能作为已定版图的 IP 整块交付。主关切分别可能是时钟噪声、供电和靠近芯片接口。</dd></dl>
+<h3>数的是哪个层级？</h3><p>子模块内部有 30 颗 SRAM。如果整个子模块已经硬化，顶层可能只看到一个大宏。做宏清单时记录三列就够起步：实例路径、引用的模板、它在当前层能否移动。</p><details><summary>把团队的一颗宏查到底</summary><p>找一颗 SRAM，记录深度、位宽、读写端口和延时。深度 256、位宽 16 bit 的逻辑阵列可存 4,096 bit，即 512 B。容量不能直接推出物理面积，面积还取决于位单元、端口和外围读写电路。</p></details></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>同一款控制器换库后，从 0 颗 SRAM macro 变成 2 颗，先查什么？</p><div class="choices"><button>综合映射报告与硬化层级</button><button>芯片照片的颜色</button><button>重新数 RTL 模块名</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://eecs151.org/asic/lab3/docs/pg4-sram-and-hard-macros/" target="_blank" rel="noopener noreferrer">Berkeley 的 SRAM 与硬宏实验 ↗</a><a href="https://www2.eecs.berkeley.edu/Pubs/TechRpts/2022/EECS-2022-248.pdf#page=43" target="_blank" rel="noopener noreferrer">Splash2 热点复盘，正文 24–27 页 ↗</a><a href="https://openlane2.readthedocs.io/en/latest/usage/using_macros.html" target="_blank" rel="noopener noreferrer">OpenLane 的硬宏与集成视图 ↗</a></details>
+</article>
+<article id="lesson-03" class="lesson" tabindex="-1" data-group="电路入门">
+<div class="lesson-no">第 03 课　/　电路入门</div><h1>一颗宏需要哪些文件</h1><p class="lead">同样叫 SRAM，工具怎么知道它有多宽、哪个脚接数据？</p>
+<div class="body"><p>把工程文件想成回答不同问题的几份图纸。面对一个完全陌生的 block，先凑齐前四项，就能读懂初始盘面。</p>
+<dl class="pairs"><dt>网表 / netlist</dt><dd>列出实例和网络。实例是某一颗具体的 SRAM；网络把驱动引脚和一个或多个接收引脚连在一起。层次路径能帮你回到它服务的模块。</dd><dt>LEF</dt><dd>技术 LEF 说明金属层与布线规则。宏 LEF 给模板的尺寸、允许的对称性、引脚金属形状和障碍 OBS。把引脚当几何图形来读，别只看它的名字。</dd><dt>DEF 或布局数据库</dt><dd>给这颗芯片里的实例、坐标、朝向、放置状态，还有芯片边界、行等。可用的 core 区域在 die 内，实际可摆区域还会被行、围栏和障碍切掉。</dd><dt>Liberty（.lib）与 SDC</dt><dd>前者描述延时、功耗和约束弧，后者给本设计的时钟、I/O 延时与路径例外。判断关键路径需要它们。</dd><dt>GDS / OASIS，SPEF，供电意图</dt><dd>前两种版图格式保留实际图形；SPEF 提供提取的线电阻、电容；电源域、供电网络与电压要求限制可放的位置和可接的供电轨。</dd></dl>
+<h3>先算一次单位</h3><p>如果 DEF 写着每微米 2,000 DBU（数据库单位），坐标 13,920 DBU 就是 6.96 µm。尺寸来自库，坐标来自实例。读到的“原点”还要按文件语义及朝向转换到统一坐标系。</p></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>想知道某 SRAM 的写掩码引脚在哪一层、靠哪条边，先开哪份文件？</p><div class="choices"><button>时钟约束 SDC</button><button>宏 LEF</button><button>只看实例名</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://openlane2.readthedocs.io/en/latest/usage/using_macros.html" target="_blank" rel="noopener noreferrer">OpenLane 的硬宏与集成视图 ↗</a><a href="https://github.com/TILOS-AI-Institute/MacroPlacement/blob/20eddb6b35232e86e6008b9deec8da77633a2f07/Enablements/NanGate45/lef/fakeram45_256x16.lef" target="_blank" rel="noopener noreferrer">Ariane 的 SRAM 物理模板 ↗</a><a href="https://github.com/TILOS-AI-Institute/MacroPlacement/blob/20eddb6b35232e86e6008b9deec8da77633a2f07/Flows/NanGate45/ariane133/def/manual_floorplan.def" target="_blank" rel="noopener noreferrer">Ariane133 人工布局 DEF ↗</a><a href="https://github.com/The-OpenROAD-Project/OpenSTA" target="_blank" rel="noopener noreferrer">OpenSTA 的时序输入与报告 ↗</a></details>
+</article>
+<article id="lesson-04" class="lesson" tabindex="-1" data-group="电路入门">
+<div class="lesson-no">第 04 课　/　电路入门</div><h1>读一张真实 SRAM 盘面</h1><p class="lead">同一个物理模板，怎么在 CPU 里变成 133 颗？</p>
+<div class="body"><p>这里可以点的是公开的 <b>Ariane133 / NanGate45 人工实验布局</b>。图按 DEF 实例坐标和 LEF 真实尺寸绘制。深棕色短线标出指定样例引脚所在的宏边，画图时放大了标记。背景空白仅表示这个 DEF 视图没画标准单元。</p>
+<div id="real-map"></div><h3>带你读第一颗</h3><p>实例路径里有 <code>i_icache</code>、<code>data_sram</code> 和 <code>macro_mem[0]</code>。它来自指令缓存的数据数组。它的模板 <code>fakeram45_256x16</code> 宽 57.570 µm、高 133.000 µm；第一颗锚点 (6.960, 5.880) µm，朝向 N。旁边一颗的 x 是 68.190 µm，朝向 FN。</p><p>所以两颗外框之间的水平净距是 68.190 − 6.960 − 57.570 = <b>3.660 µm</b>。能否在这个缝里布下相关网络，还要看引脚层、上方金属资源和实际走线需求。</p></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>两颗同模板 SRAM 的左下角横坐标相差 61.230 µm，模板宽 57.570 µm。它们之间的净距是多少？</p><div class="choices"><button>61.230 µm</button><button>3.660 µm</button><button>57.570 µm</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://github.com/TILOS-AI-Institute/MacroPlacement/blob/20eddb6b35232e86e6008b9deec8da77633a2f07/Flows/NanGate45/ariane133/def/manual_floorplan.def" target="_blank" rel="noopener noreferrer">Ariane133 人工布局 DEF ↗</a><a href="https://github.com/TILOS-AI-Institute/MacroPlacement/blob/20eddb6b35232e86e6008b9deec8da77633a2f07/Enablements/NanGate45/lef/fakeram45_256x16.lef" target="_blank" rel="noopener noreferrer">Ariane 的 SRAM 物理模板 ↗</a><a href="https://tilos-ai-institute.github.io/MacroPlacement/Flows/NanGate45/ariane133/" target="_blank" rel="noopener noreferrer">Ariane 的两份人工基线和逐阶段指标 ↗</a></details>
+</article>
+<article id="lesson-05" class="lesson" tabindex="-1" data-group="第一次摆盘">
+<div class="lesson-no">第 05 课　/　第一次摆盘</div><h1>先画谁和谁通信</h1><p class="lead">A、B 两块 SRAM 几何完全一样，为什么不能随便交换？</p>
+<div class="body"><p>回到那块缓存。把控制器标为 C，取两颗数据 SRAM 标为 A、B。读 A 要带过去地址和使能，还要把数据带回来。A 和 B 虽然相同，但如果 A 连的是 C，B 连的是另一个端口，它们适合的位置就可能不同。</p><h3>从上千条网读出接口</h3><ol><li>从 A 的数据、地址及控制 pin 出发，沿网表找到另一端。经过组合逻辑时，必要时追到寄存器或模块边界。</li><li>把端点按控制器、总线、计算单元或 I/O 分组。分别记录位宽、方向、层次和是否处于关键路径。把时钟、复位等全局网络单独看。</li><li>叠加这些组粗摆后的物理位置。连接密切的端点如果隔着障碍，画出可能穿过的通道。</li></ol><p><b>第一次试摆</b>可以让 A 的数据引脚朝 C。但若两者之间隔着不能跨越的低层金属障碍，几何上近也可能绕远。第一版摆法是一条待验证的假设。</p>
+<details><summary>为什么不能简单数“连了几根线”？</summary><p>64 位数据总线在物理上可占许多轨道。另一方面，一条低扇出控制路径也可能决定时钟周期。先分别看布线需求和时序重要性，再决定是否加权。</p></details><details><summary>层次设计练习：顶层看不到里面的 SRAM 怎么办？</summary><p>假设 CPU 子块已经硬化，右边一束接口访问外部 L2。先画 CPU 外部 pin 到 L2 pin 的通路，再画其他穿过这条走廊的总线。若热点在 CPU 内部，应带内部网表分析。若分区可改，比较调整边界 pin、让控制器与存储同组或拆分拥挤接口的代价；重新生成边界时序模型，再验证顶层。</p></details></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>共享复位连到几乎所有宏。仅凭它能否断定 A 与 B 应贴在一起？</p><div class="choices"><button>能，因为是同一条 net</button><button>先看专属数据通路和关键路径</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://www2.eecs.berkeley.edu/Pubs/TechRpts/2022/EECS-2022-248.pdf#page=94" target="_blank" rel="noopener noreferrer">EagleX 工程师复盘，正文 75–76 页 ↗</a><a href="https://github.com/TILOS-AI-Institute/MacroPlacement/blob/20eddb6b35232e86e6008b9deec8da77633a2f07/Flows/NanGate45/bp_quad/def/manual_macro_placement/tile_00.tcl#L15" target="_blank" rel="noopener noreferrer">IBM 工程师摆 BlackParrot 的原始 Tcl ↗</a></details>
+</article>
+<article id="lesson-06" class="lesson" tabindex="-1" data-group="第一次摆盘">
+<div class="lesson-no">第 06 课　/　第一次摆盘</div><h1>先划出真正能摆的区域</h1><p class="lead">看着空的地方，为什么可能放不下？</p>
+<div class="body"><p>先在图上描出 <b>die</b>（整片边界）与 <b>core</b>（核心实现区），再叠加固定宏、I/O、禁止摆放区和电源域围栏。候选点只说明宏的一个锚点在那里，合法性必须检查放下后的整个轮廓。</p><h3>把 A 放下去之前</h3><ol><li>把朝向作用于模板，算出实例外框和引脚坐标；若允许 90° 旋转，宽高会交换。</li><li>查整个外框是否位于可用区域，是否越过凹边、碰到固定障碍、已有宏或工艺要求的间隔。</li><li>查电源域、网格、朝向和明确的 keepout。halo 是周围留出的限制区，限制对象可能是标准单元、另一颗宏或某种布局阶段，要读当地定义。</li></ol><p>例如 core 的 x 范围是 0–100 µm，A 宽 18 µm，左下角取 85 µm，右边界就到 103 µm。锚点合法，整颗仍越界。</p><p>即使芯片上空白总面积大于 A，碎成几个窄条也放不进它。评估利用率时写明分母，区分全 core 面积和扣掉固定块后的可摆面积。</p><details><summary>进阶：计算真正能用的白地</summary><p>100 × 100 µm 的 core，宏与禁止标准单元摆放区的并集占 4,000 µm²，标准单元面积为 4,200 µm²。以余下的 6,000 µm² 为分母，有效利用率为 70%。两个 halo 相交只扣一次。相同的 70% 可以是一片连续空间，也可以是窄缝，仍需检查局部密度和可用的单元行。</p></details></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>凹形 core 内，宏的四个角都在合法区域，能否直接过检？</p><div class="choices"><button>可以，四个角够了</button><button>还要查整个轮廓与凹口、障碍的交叠</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://openroad.readthedocs.io/en/latest/main/openroad/mpl/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的层次化宏布局 ↗</a><a href="https://openlane2.readthedocs.io/en/latest/usage/using_macros.html" target="_blank" rel="noopener noreferrer">OpenLane 的硬宏与集成视图 ↗</a></details>
+</article>
+<article id="lesson-07" class="lesson" tabindex="-1" data-group="第一次摆盘">
+<div class="lesson-no">第 07 课　/　第一次摆盘</div><h1>引脚朝向与通道的实际宽度</h1><p class="lead">翻转一块 SRAM，中心不动，为什么还能改变结果？</p>
+<div class="body"><p>Ariane 的模板里，<code>w_mask_in[0]</code> 的矩形在 metal3 的左边缘。对这颗宏用 FN 朝向会左右翻转，该引脚就到右边。两颗矩形的中心距离完全相同，控制器到<strong>引脚</strong>的距离和出线方向却变了。</p><h3>估一条通道，先看哪一层</h3><p>假设某层跨通道可用宽度为 4.0 µm，轨道节距为 0.4 µm，粗估约 10 条轨道。供电和障碍占去 3 条后，只剩约 7 条。如果这一层有 12 条线都得经过，已有约 5 条的缺口。精确数量依赖轨道起点、边界间隔、首选方向和过孔。</p><p>实际判断要分别查水平、垂直方向，确认哪些层能越过宏，哪些层被 OBS 阻断。引脚一侧可能需要留足打孔和扇出空间，背面则可能允许更紧密地贴放。翻转前再核对 LEF 对称性、供电轨和项目许可。</p></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>宏中心不动，左右镜像后，哪项一定保持原值（以中心为位移基准）？</p><div class="choices"><button>引脚到控制器的距离</button><button>宏中心位移</button><button>局部引脚可达性</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://github.com/TILOS-AI-Institute/MacroPlacement/blob/20eddb6b35232e86e6008b9deec8da77633a2f07/Enablements/NanGate45/lef/fakeram45_256x16.lef" target="_blank" rel="noopener noreferrer">Ariane 的 SRAM 物理模板 ↗</a><a href="https://www2.eecs.berkeley.edu/Pubs/TechRpts/2022/EECS-2022-248.pdf#page=94" target="_blank" rel="noopener noreferrer">EagleX 工程师复盘，正文 75–76 页 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/pdn/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的供电网格生成 ↗</a></details>
+</article>
+<article id="lesson-08" class="lesson" tabindex="-1" data-group="第一次摆盘">
+<div class="lesson-no">第 08 课　/　第一次摆盘</div><h1>工程师怎样做第一版</h1><p class="lead">在一片空 core 上，手第一步落在哪里？</p>
+<div class="body"><p>先摆最不自由的对象。画出 I/O 和电源域，圈出不能动的 IP，再找接口强、长宽受限的那组 SRAM。挑两个都合法的方案，把标准单元粗摆进去后再看拥塞和关键路径。</p><h3>一个有作者解释的选择</h3><p>EagleX 团队在相邻计算 tile 边界镜像摆放，使向量单元和 L1 SRAM 可以贴合，给狭长 tile 留横向空间。同一颗芯片的脉动阵列内，工程师却把 SRAM 拉开，给下方和左侧的处理单元留走线空间。决定间距的是这条接口需要什么。</p><h3>把人的经验写成可复用的约束</h3><p>STAC 的工程师指定一组 SRAM 从左下角向上排。第一颗锚定在边上，后续读上一颗的实际边框，再加间隔。另一组则从左上向下排并使用另一种朝向。一个人做了分组与方向选择，程序替他展开坐标。</p><p>历史上这几种方式长期并存。2007 年的 MP-tree 已经自动搜索宏布局；2021 年 Google 仍以工程师多轮迭代的 TPU 布局作为基线。不同项目没有统一的人工占比。</p></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>看到 Apple 的成品图里缓存靠近 CPU，可以直接断言工程师按某套顺序手摆吗？</p><div class="choices"><button>可以还原顺序</button><button>成品图能看相对位置，过程要查脚本或作者复盘</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://www2.eecs.berkeley.edu/Pubs/TechRpts/2022/EECS-2022-248.pdf#page=94" target="_blank" rel="noopener noreferrer">EagleX 工程师复盘，正文 75–76 页 ↗</a><a href="https://github.com/ucb-bar/stac-top/blob/2702197ccbf126e2d9a02abfa0c2a20f61d9cec2/vlsi/hammer-driver#L167" target="_blank" rel="noopener noreferrer">Berkeley STAC 的实际摆放程序 ↗</a><a href="https://cc.ee.ntu.edu.tw/~ywchang/Papers/dac07-macro.pdf.pdf" target="_blank" rel="noopener noreferrer">2007 年 DAC 的 MP-tree 原文 ↗</a><a href="https://www.cl.cam.ac.uk/~ey204/teaching/ACS/R244_2022_2023/papers/Mirhoseini_NATURE_2021.pdf#page=17" target="_blank" rel="noopener noreferrer">Google 的人工和 RL 方案，扩展图 5 ↗</a></details>
+</article>
+<article id="lesson-09" class="lesson" tabindex="-1" data-group="验证摆放">
+<div class="lesson-no">第 09 课　/　验证摆放</div><h1>给一次试摆算账</h1><p class="lead">A 比初始位置近了，能说明新盘面更好吗？</p>
+<div class="body"><p>先记<b>硬约束</b>，有重叠、越界或电源域错误的方案先淘汰。剩下的合法方案用一张账单比较。位移告诉你扰动多大；线长、拥塞和时序各回答不同问题。</p><dl class="pairs"><dt>位移</dt><dd>A 从 (10, 4) 到 (13, 2)，曼哈顿位移是 |3| + |−2| = 5。整盘可以报总和、最大值和移动宏数。单独记录翻转，因为纯翻转的中心位移可以是零。</dd><dt>HPWL，半周长线长</dt><dd>一条网的估计线长是引脚包围盒的宽加高。引脚在 (1,1)、(4,1)、(4,3)，HPWL 为 3 + 2 = 5。它计算很便宜，但看不到绕障、跨层和多端网的具体分支。</dd><dt>时序与可布性</dt><dd>关键路径是否变差、水平或垂直是否超容量、详细布线能否接到每个 pin，都要另查。解码失败和留大片碎白也应单独记录。</dd></dl><p>如果合成一个 cost，先统一方向与尺度。例如对同一设计的参考盘面，分别用固定正标尺归一化各项，再加权。参考 overflow 若为 0 就不能拿它当除数。保留原始单位，以便知道总分下降到底换来了什么。</p></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>三个 pin 的包围盒没变，宏挡住了最短路径。哪项可能保持不变？</p><div class="choices"><button>实际布线长度</button><button>HPWL</button><button>所有路径延时</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://tilos-ai-institute.github.io/MacroPlacement/Flows/NanGate45/ariane133/" target="_blank" rel="noopener noreferrer">Ariane 的两份人工基线和逐阶段指标 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/mpl/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的层次化宏布局 ↗</a></details>
+</article>
+<article id="lesson-10" class="lesson" tabindex="-1" data-group="验证摆放">
+<div class="lesson-no">第 10 课　/　验证摆放</div><h1>读懂一格 overflow</h1><p class="lead">热图上红了一块，红的究竟是什么？</p>
+<div class="body"><p>全局布线常把芯片划成格子，相邻格子之间是一条可跨越的边。某层、某方向的一条边能容纳 <b>C</b> 条等效轨道，计划通过的需求为 <b>D</b>，边的 overflow 定为 <b>max(0, D − C)</b>。工具的显示可能把多条边、多层合到一个像素，先看单位和聚合方式。</p><p>例：边甲 D=12、C=8，边乙 D=7、C=8。两条边合计 overflow 为 4，最坏边也是 4。乙的空余不能自动抵消甲的超载。若 C=0，要单独处理利用率 D/C，超载量定义仍可计算。</p>
+<h3>红格有两个来源</h3><p><b>需求集中。</b>许多数据网引脚朝向同一条走廊，或综合逻辑本身连线密。<b>供给减少。</b>低层被宏、供电条带、过孔阵列或障碍占掉。某颗宏即使不连红格上的那些网，也可能挡住它们。</p><p>RUDY 是一种早期估计，把各网估计的布线需求分摊到其引脚包围盒内。它能提示哪里可能挤，无法给出某条网实际经过哪一格。你们的 <code>myrudy</code> 目前只是模型名，先明确定义输入、方向、容量和输出，再谈怎样接入 pack。</p><details><summary>自己写估计器时，怎样处理直线和更新？</summary><p>对宽 w、高 h 的二端包围盒，一种教学近似是将水平需求 w、垂直需求 h 分开按各格重合面积分配。宽或高为零时改用一维线段与格子的重合长度，或定义最小覆盖宽度，再检查需求守恒。移动引脚后，对受影响网撤销旧贡献、加入新贡献；障碍移动还要更新容量。用整盘重算作对照。</p></details></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>一颗宏不连经过红格的任何网，还可能是搬移候选吗？</p><div class="choices"><button>有可能，它可能占掉通道容量</button><button>只能搬这些网的端点宏</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://doi.org/10.1109/DATE.2007.364463" target="_blank" rel="noopener noreferrer">Spindler 与 Johannes 的 RUDY 原文 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/grt/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的全局布线和报告 ↗</a><a href="https://www2.eecs.berkeley.edu/Pubs/TechRpts/2022/EECS-2022-248.pdf#page=43" target="_blank" rel="noopener noreferrer">Splash2 热点复盘，正文 24–27 页 ↗</a></details>
+</article>
+<article id="lesson-11" class="lesson" tabindex="-1" data-group="验证摆放">
+<div class="lesson-no">第 11 课　/　验证摆放</div><h1>动手改变走线瓶颈</h1><p class="lead">原地翻转、移走挡路的宏，两种动作的代价一样吗？</p>
+<div class="body"><p>从四颗 SRAM 中取 A、B，在一片 12 × 8 的教学网格上试摆。A、B 都能移动和左右翻转。C 是固定的控制器端点，W、E 是总线两端，P 是固定 IP。<b>先预测，再按按钮。</b></p><div id="practice-lab"></div><h3>先完成三个动作</h3><ol><li>保留初始位置，看横穿 core 的 W–E 总线与 A 的数据线在哪里相遇。先只翻转 A，观察位移和超载分别怎么变。</li><li>恢复初始盘，把 A 下移一格。注意 A 有两格高，可能仍覆盖原通道。再下移一格，观察哪个指标发生变化。</li><li>让总 overflow 降到 0，同时总位移不超过 2 格。把自己的判断记到末课的实验记录里。</li></ol><p>本实验的三条线束固定先水平后垂直，局部容量由宏遮挡决定。这使每条边的结果可以手算。真实全局路由器还会选路、分层、绕障和迭代消解拥塞。</p></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>只翻转 A，位移为 0，overflow 却变化。最直接的解释是什么？</p><div class="choices"><button>移动统计必然坏了</button><button>引脚换边，使线束占用的边变了</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://openroad.readthedocs.io/en/latest/main/openroad/grt/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的全局布线和报告 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/drt/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的引脚接入与详细布线 ↗</a></details>
+</article>
+<article id="lesson-12" class="lesson" tabindex="-1" data-group="验证摆放">
+<div class="lesson-no">第 12 课　/　验证摆放</div><h1>从粗摆走到签核</h1><p class="lead">全局布线不红了，为什么芯片仍可能过不了？</p>
+<div class="body"><ol class="sequence"><li><b>宏布局与标准单元粗摆。</b>先找结构性问题。固定标准单元做对照时要说明；生产流程若允许重摆，须再评估一次合法化和粗摆后的反馈。</li><li><b>时钟树与时序。</b>用约束和库评估路径。对 setup，slack 是要求到达时刻减实际到达时刻。要求 1.00 ns、实际 1.08 ns，余量 −0.08 ns。hold 用最早到达约束单独分析。比较同一角、同一模式及同一实现阶段的 WNS（最差负余量）和 TNS（负余量汇总）。</li><li><b>供电与特殊网络。</b>检查宏 PG pin 能否接到正确电源域和条带，局部 IR drop、电流密度及噪声是否可接受。给信号留出的缝也可能是供电必经位置。</li><li><b>全局与详细布线。</b>全局路由确定大致走廊，详细路由落实到轨道和过孔。没有全局 overflow，仍可能发生宏边 pin access 失败、间距 DRC 或短路。</li><li><b>提取与签核。</b>用提取寄生重看多模式多工艺角的 setup/hold，检查 DRC、LVS（版图和网表是否一致）、电源完整性。根据项目阶段调用相应签核工具。</li></ol><p>如果一翻 A 就改善拥塞却破坏供电引脚连通，先排除这个朝向；给代价函数再加一个小罚分不能替代这条硬约束。</p><details><summary>时序实例：线短了，路径为什么还差？</summary><p>检查同一模式与角下的起点、终点、单元弧和线延时。若要求 1.00 ns，改动前到达时间 1.08 ns，改后 1.05 ns，slack 就从 −0.08 变为 −0.05 ns。路径改善但仍未闭合。若瓶颈是 SRAM 内部访问弧，继续挪位置的空间有限；若主要是最后一段线与大扇出，就检查驱动、缓冲和引脚侧。</p></details><details><summary>多电源域和模拟宏的落点怎样评审？</summary><p>叠加电压域围栏、宏供电引脚、供电轨和连接金属层，查翻转后是否仍能接通。跨域接口要查电平转换和隔离单元的位置。对 PLL 等模拟块，用 IP 集成约束核实噪声隔离及其与参考时钟、供电的关系。把同一份候选数据库交给时钟、供电和布线负责人复查。</p></details></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>详细布线在 SRAM 的几个引脚附近报错，但整块总 overflow 是 0。下一步看哪里？</p><div class="choices"><button>查这些引脚的接入层、过孔和邻近障碍</button><button>只继续压低 HPWL</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://github.com/The-OpenROAD-Project/OpenSTA" target="_blank" rel="noopener noreferrer">OpenSTA 的时序输入与报告 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/grt/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的全局布线和报告 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/drt/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的引脚接入与详细布线 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/pdn/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的供电网格生成 ↗</a></details>
+</article>
+<article id="lesson-13" class="lesson" tabindex="-1" data-group="工程决策">
+<div class="lesson-no">第 13 课　/　工程决策</div><h1>从成品图学到哪一步</h1><p class="lead">同样看一张芯片图，怎样区分观察和推断？</p>
+<div class="body"><div class="case"><h3>AMD Jaguar 与 Apple M1</h3><p>Jaguar 的计算单元版图上方有四片标为 L2 的区域，下方是四个 CPU 核。M1 的实物标注图里，右侧两排大核之间有 L2 区。这些图能确认相对位置。单颗 SRAM 的网表、被尝试后放弃的方案及工程师的操作顺序，需要其他证据。</p></div><div class="case"><h3>GreenRio 的失败尝试</h3><p>团队手动指定 8 个 SRAM 的位置后，一次布线超过 10 小时被中断。后续尝试调整模块硬化边界，最终保留 SRAM 并打平其他模块。这个过程说明，宏间跨边界连线的数量也能决定一张盘能不能走通。</p></div><div class="case"><h3>Basilisk 的调整范围更大</h3><p>工程师保持缓存容量，把 SRAM 从 36 颗改为 24 颗，并给逻辑留出更连续的区域。项目若只允许移动已有矩形，就不能把更换 SRAM 实现产生的收益算到摆放算法头上。</p></div><p>判断证据强弱有个简单习惯：在笔记里写下“图上看见了什么”“作者亲自解释了什么”“我还需要试什么”。三行分开后，你自己的推断也能成为可验证的假设。</p></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>比较两代芯片时，发现后一代 SRAM 数都变了。能把面积改善直接归给 pack 吗？</p><div class="choices"><button>能，版图更紧凑</button><button>先固定宏集合，或分开评估实现变化</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://www.hardware.fr/marc/ISSCC2013-Final-v5.pdf#page=9" target="_blank" rel="noopener noreferrer">AMD Jaguar 的物理版图，第 9 页 ↗</a><a href="https://www.techinsights.com/sites/default/files/2021-01/m1-die-photo_0.jpg" target="_blank" rel="noopener noreferrer">TechInsights 的 M1 芯片标注 ↗</a><a href="https://riscv.or.jp/wp-content/uploads/day3_TsingHua-University_riscv_day_yifeizhu_final.pdf#page=16" target="_blank" rel="noopener noreferrer">GreenRio 的五次尝试，第 16–20 页 ↗</a><a href="https://arxiv.org/pdf/2405.04257#page=6" target="_blank" rel="noopener noreferrer">Basilisk 设计团队，第 6 页 ↗</a></details>
+</article>
+<article id="lesson-14" class="lesson" tabindex="-1" data-group="工程决策">
+<div class="lesson-no">第 14 课　/　工程决策</div><h1>人在摆，算法在搜什么</h1><p class="lead">从贪心到 RL，有哪些不同决定？</p>
+<div class="body"><p>把当前题目写成五行：可移动对象、合法动作、硬约束、评价依据、停止条件。人把哪些动作交给机器，是比算法名字更重要的设计选择。</p>
+<dl class="pairs"><dt>贪心和前瞻</dt><dd>贪心选眼前最好的候选。前瞻先临时摆后几颗，再评价首步。如果 A 占了 B 唯一能放的宽槽，第二步就能暴露眼前高分的代价。束搜索每层留若干条部分方案，代价随束宽上升。</dd><dt>树表示与模拟退火</dt><dd>树可以编码相对次序和贴靠关系，由解码器生成坐标。MP-tree 给出处理混合尺寸宏的打包表示。模拟退火可更改树、顺序或朝向，按温度有概率接受暂时变差的合法盘面。树是表示方法，退火是搜索方法。</dd><dt>解析布局与层次化</dt><dd>连续优化用可微近似权衡线长和密度，再做宏合法化。层次化方法先按连接或设计层次分组，再细化组内位置。分组过粗会漏掉跨组关键接口。</dd><dt>Q-table 与学到的策略</dt><dd>Q(s,a) 估计状态 s 下选动作 a 的后续回报。如果局面表示过细，训练中大量状态只见一次，旧 Q 值就很少参与下一次选择；规则筛选与前瞻仍可能起作用。要单测历史 Q 对选动作有多少贡献。</dd></dl><p>比较方法时固定初始盘、冻结对象、候选生成器和计算预算。记录合法出解率、质量分布和耗时；一次跑出好解不足以说明谁普遍更强。</p><details><summary>怎样缩小巨大的状态空间？</summary><p>假设 20 个宏各只有 8 个落点，忽略重叠也已有 8²⁰ 种组合。可以先固定部分宏、把同 bank 的几颗编成一组、只生成贴边或角落候选、按剩余空白剪枝，再对少数候选前瞻。每个限制都可能丢掉好解。在小例子上一次放开一种剪枝，测出速度换掉了多少好候选。</p></details></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>关掉 Q 值后质量相同，但关闭前瞻后明显变差。这组试验直接支持哪项判断？</p><div class="choices"><button>目前样本和预算下，前瞻贡献较明显</button><button>一切 RL 对任何 pack 都无用</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://cc.ee.ntu.edu.tw/~ywchang/Papers/dac07-macro.pdf.pdf" target="_blank" rel="noopener noreferrer">2007 年 DAC 的 MP-tree 原文 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/mpl/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的层次化宏布局 ↗</a><a href="https://www.cl.cam.ac.uk/~ey204/teaching/ACS/R244_2022_2023/papers/Mirhoseini_NATURE_2021.pdf#page=17" target="_blank" rel="noopener noreferrer">Google 的人工和 RL 方案，扩展图 5 ↗</a></details>
+</article>
+<article id="lesson-15" class="lesson" tabindex="-1" data-group="工程决策">
+<div class="lesson-no">第 15 课　/　工程决策</div><h1>在 RLpack 里看一次决策</h1><p class="lead">试摆 A 时，movement 和拥塞应该在何处比较？</p>
+<div class="body"><p>用你们已经展开的 C++ 文本定位主线。<code>getPackMacroOrder()</code> 调用训练入口；在 <code>multitrain()</code> 的循环里能找到 <code>multiActionLookAhead()</code>。后者调用 <code>multiStateLoop()</code>，其中可以定位 <code>getLoopActs()</code>、<code>getBestAct()</code> 和 <code>findFitBin()</code>。恢复文本有 OCR 错字，函数名适合导航；具体参数、分支和权重要以团队可编译源码核对。</p>
+<h3>把动作和实际落点区分开</h3><p>假设候选是 512 和 513。先确认它们表示 bin、方向还是一个已确定且合法的位置。若两个动作直到试放才知道 A 的实际坐标，单在候选排序时给精确位移或拥塞打分，就要先有与试放一致的几何结果。</p>
+<ol><li><b>候选阶段。</b>可以先用便宜的位移下界或局部拥塞估计排序。记录被过滤掉的候选，避免把好解提前剪掉。</li><li><b>得到试摆盘面。</b>对相同的候选状态算 Δmovement、Δmyrudy。局部已摆宏之外的端点用何种参考位置要固定。试摆撤回时同时恢复几何、需求和容量缓存，避免同一动作因评估顺序而得不同分数。</li><li><b>完整盘面。</b>比较被接受的最终布局，跑同一评估器；早期局部奖评分和最终目标分别留日志。若模型高度相关却选错最好的候选，还需看候选排序。</li></ol>
+<p>实验日志可以只追一个宏。记下状态键、候选、试摆前后坐标、成本各项、有没有查到旧 Q、最终选了谁。这比盯着一次更新出的 1.4 更能定位贡献。</p></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>只改候选排序就把 myrudy 算了，现在最终成品一定会改善吗？</p><div class="choices"><button>一定会</button><button>还要测真实落点、筛选、奖励以及最终布线</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://openroad.readthedocs.io/en/latest/main/openroad/mpl/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的层次化宏布局 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/grt/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的全局布线和报告 ↗</a></details>
+</article>
+<article id="lesson-16" class="lesson" tabindex="-1" data-group="工程决策">
+<div class="lesson-no">第 16 课　/　工程决策</div><h1>拥塞后处理怎样选宏</h1><p class="lead">摆盘已经完整，第一批该抠哪几颗？</p>
+<div class="body"><ol class="sequence"><li><b>先给原盘建基线。</b>锁定网表、初始布局和固定对象。记录每层每方向的 overflow、最坏边、总量和时序。选一片相连的热点，并保留周围几圈边。</li><li><b>追需求，也追容量。</b>有全局路由路径时，找哪些网跨过这些边，再追到端点宏和服务逻辑。只有 RUDY 时，将其标为估计贡献。另找直接覆盖瓶颈、压缩通道或限制可用落点的宏。</li><li><b>构造小组。</b>分别尝试端点宏、挡路宏、同 bank 邻居。按可移动性、关键时序和可用目的地筛选。给不能动的标准单元或宏明确保护策略。</li><li><b>抠下并重建。</b>在副本中移除选中的宏，重跑局部 pack 或枚举可行重摆。改变位置、组序或允许的朝向；其余对象按实验契约固定。检查归位、无重叠与约束。</li><li><b>决定保留或回退。</b>对完整新盘做相同的验证。原热点降了仍需看全片总量、最坏边、位移与时序。如新热点更严重，回退并换一组。若换组也无效，检查容量模型或标准单元侧原因。</li></ol><p>Splash2 的实际复盘里，一个热点来自用组合门实现的 FFT 旋转因子 ROM。作者提出给逻辑更大的摆放区域。对一个只能搬宏的后处理器，这说明“有红就必须搬某颗 macro”并非总有可行答案。</p><details><summary>追因样例：这次到底搬谁？</summary><p>同一条边基线 D=12、C=8，超 4。翻转端点宏 A 后估计 D=9、C=8，超 1。另一版移开未连这些网的宏 B 后，D=12、C=12，本边超 0。但若邻边新增 6 条 overflow，全片反而变差。两次都要等被抠的宏全部放回，再算完整盘面，否则临时消失的引脚与遮挡会美化结果。</p></details></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>热点 H 被消掉了，旁边 H₂ 更严重，全片总 overflow 还上升。该怎样记这次结果？</p><div class="choices"><button>成功，只要 H 下降即可</button><button>记录热点转移，按事先约定的全片门槛接受或回退</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://www2.eecs.berkeley.edu/Pubs/TechRpts/2022/EECS-2022-248.pdf#page=43" target="_blank" rel="noopener noreferrer">Splash2 热点复盘，正文 24–27 页 ↗</a><a href="https://arxiv.org/pdf/2405.04257#page=6" target="_blank" rel="noopener noreferrer">Basilisk 设计团队，第 6 页 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/grt/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的全局布线和报告 ↗</a></details>
+</article>
+<article id="lesson-17" class="lesson" tabindex="-1" data-group="上项目">
+<div class="lesson-no">第 17 课　/　上项目</div><h1>把一次试摆变成可复现实验</h1><p class="lead">两个方案都好看，怎么决定交哪一个？</p>
+<div class="body"><p>先写实验契约。保存相同网表、LEF、时序库、SDC、初始 DEF、布线层和容量设置、工具版本、种子和线程设置。把允许移动的实例清单归档；冻结标准单元与允许重新粗摆是两项不同实验。</p>
+<h3>读一张真的结果单</h3><p>下表来自 Ariane133，都是同一公开 Flow-2 的 postRouteOpt 阶段。A 是 Wang 的人工网格方案，B 是 Jung 的人工方案。</p>
+<table><caption>公开基准的两个人工方案</caption><thead><tr><th>指标</th><th>A</th><th>B</th></tr></thead><tbody><tr><th>线长 / µm</th><td>5,018,976</td><td>4,711,746</td></tr><tr><th>最差余量 / ns</th><td>−0.117</td><td>−0.107</td></tr><tr><th>TNS / ns</th><td>−55.035</td><td>−69.589</td></tr></tbody></table>
+<p>B 的线长缩短约 6.12%，最差余量略有改善，但总负余量加重。该阶段的拥塞栏为空；把空栏当零，就会虚构一项结论。如果交付门槛是 TNS 不能退化，B 不过门槛。</p><h3>检验自己的 myrudy</h3><p>从多个设计抽取成对候选，各跑代理模型和同配置全局布线。对照 A/B 的优劣方向、最差几例的漏报、热点重合和运行时间。用从未调权的设计做留出验证；同一设计上的相邻候选不能混进训练与独立验证两侧。</p><p>最后做消融实验。同预算比较原 pack、只加重摆、再加拥塞成本；对 Q-table 另外记录查表命中、真正改变首选动作的比例、以及对应的质量变化。结果按设计成对汇总，报告中位数、坏尾部和失败数。</p></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>若验收要求线长下降且 TNS 不退化，可以直接交表中的 B 吗？</p><div class="choices"><button>可以，最坏路径略好</button><button>不能按这个门槛交，B 的 TNS 更负</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://tilos-ai-institute.github.io/MacroPlacement/Flows/NanGate45/ariane133/" target="_blank" rel="noopener noreferrer">Ariane 的两份人工基线和逐阶段指标 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/grt/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的全局布线和报告 ↗</a></details>
+</article>
+<article id="lesson-18" class="lesson" tabindex="-1" data-group="上项目">
+<div class="lesson-no">第 18 课　/　上项目</div><h1>把方法带到真实工具</h1><p class="lead">从读数据到交付结果，要留下哪些能核查的东西？</p>
+<div class="body"><h3>第一趟，只读一份真实布局</h3><p>下载第 4 课的人工 DEF 和同一个 LEF。搜索 <code>UNITS DISTANCE MICRONS</code>、<code>DIEAREA</code>、<code>COMPONENTS</code>；按实例的模板名分组。去 LEF 找 <code>SIZE</code>、<code>SYMMETRY</code> 和一个具体 pin 的 <code>RECT</code>。用纸笔复算第一对宏的间隙，再点网页核对。这个布局快照没有用于完整路由的标准单元与网表，适合做几何练习。</p>
+<h3>第二趟，有完整工程时重跑 A/B</h3><p>使用已配置好的 OpenROAD Flow Scripts（ORFS）和包含宏的设计。按项目文档准备 PDK、宏 LEF、时序模型及源码。从同一 floorplan 检查点复制两个运行目录，分别加载 A/B 的宏位置；用同一套脚本重新执行后续标准单元布局、CTS 与路由。比较同一阶段的输出。</p><p>下面是已加载设计的 OpenROAD Tcl 片段，用来盘点实例与导出检查点。筛选条件仅适用于本课的 fakeram 模板。</p><pre><code>set block [ord::get_db_block]
+set count 0
+foreach inst [$block getInsts] {
+    set master [$inst getMaster]
+    if {[$master getName] eq "fakeram45_256x16"} {
+        incr count
+    }
+}
+puts "fakeram instances = $count"
+write_def snapshot.def</code></pre>
+<p>在<strong>已完成合法布局、PDN 与路由资源配置</strong>的独立试验目录中，按该设计的约束运行全局路由。实际执行时保留原工程的其他参数，报告和数据库文件分别归入 A、B。</p>
+<pre><code>global_route -congestion_report_file overflow.rpt
+write_db after_global_route.odb</code></pre>
+<p>全局路由失败也保留日志。进一步检查详细布线违规和时序报告。复盘时把实例清单、两个盘面的坐标差、两张同色标热图、原始指标表和失败原因放在一起。网页实验在浏览器本地计算，与这里所述 EDA 流程分开。</p><details><summary>交一份别人能复跑的 A/B 评审</summary><p>两份运行目录保留同源输入散列、工具版本、种子、线程、宏位置、调用命令与返回状态。逐阶段记录水平及垂直超载、线长、setup/hold、详细布线违规和运行时间。若只跑到全局路由，就在结果表写明详细布线待测，并说明下一阶段什么证据会推翻当前判断。</p></details></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>两张热图自动使用了不同色标，还能单靠颜色深浅判断哪张改善吗？</p><div class="choices"><button>可以，较淡的就是好</button><button>要固定色标、层与网格，并比较原始数值</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html" target="_blank" rel="noopener noreferrer">OpenROAD Flow 的完整实现教程 ↗</a><a href="https://github.com/TILOS-AI-Institute/MacroPlacement/blob/20eddb6b35232e86e6008b9deec8da77633a2f07/Flows/NanGate45/ariane133/def/manual_floorplan.def" target="_blank" rel="noopener noreferrer">Ariane133 人工布局 DEF ↗</a><a href="https://github.com/TILOS-AI-Institute/MacroPlacement/blob/20eddb6b35232e86e6008b9deec8da77633a2f07/Enablements/NanGate45/lef/fakeram45_256x16.lef" target="_blank" rel="noopener noreferrer">Ariane 的 SRAM 物理模板 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/grt/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的全局布线和报告 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/drt/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的引脚接入与详细布线 ↗</a></details>
+</article>
+<article id="lesson-19" class="lesson" tabindex="-1" data-group="上项目">
+<div class="lesson-no">第 19 课　/　上项目</div><h1>做一次独立布局评审</h1><p class="lead">你能给出一个工程师可以复查的摆放决定吗？</p>
+<div class="body"><p>用第 11 课的同一块盘面，先写你认为的瓶颈，再提交一张同时满足两个条件的盘：<b>总 overflow 为 0，总位移不超过 2 格</b>。可以翻转，也可以不移动 B。系统会用当前坐标重新计算。</p><div id="cap-lab"></div><h3>留下自己的评审记录</h3><p>写出你观察到什么、改哪颗、为什么、验证到哪一步。这里可保存草稿和下载 Markdown，方便回到真实项目继续写。</p><div id="notebook"></div>
+<details><summary>用这四项给自己的评审打分</summary><ol><li><b>对象，1 分。</b>能指出宏、模板、引脚边、相邻控制器及不可移动对象。</li><li><b>归因，1 分。</b>能说出至少一条供需失衡的边、需求来自谁、谁占掉容量，给出另一种可能原因。</li><li><b>对照，1 分。</b>有同初始盘的前后数值，说明至少一个被拒绝的动作和一个取舍。</li><li><b>验证，1 分。</b>明确教学模型的边界，并写出真实工程要用哪一阶段的报告检查热点转移、时序和合法性。</li></ol></details>
+<h3>继续积累判断力的三次现场作业</h3><ol><li><b>陌生设计交接。</b>对另一个真实 block 交一份宏清单、层次分组、关键接口及供电/固定约束图。请同事用原始网表抽查两颗。</li><li><b>一次亲自重摆。</b>保留基线，做三版只改一个因素的布局，分别是翻转、变通道、整组重建。用真实全局路由和时序验证，把预测与结果相反的一例保留下来。</li><li><b>一次跨设计评审。</b>预先写下验收门槛与预算，找队友提供一块没见过的设计盲测。解释失败样本、签核差距与回退方案。网页通关验证的是模型内能力，现场作业才检验迁移到真实工程的水平。</li></ol></div>
+<section class="quiz" aria-label="随堂练习"><h3>自己判断一下</h3><p>真实工程里，最能支持把这次方法交给组内使用的凭据是什么？</p><div class="choices"><button>这次网页拿到最低分</button><button>跨设计按同口径验证，有失败边界、约束与回退记录</button><button>截图比以前整齐</button></div><div class="feedback" role="status"></div></section>
+<details class="source"><summary>本课参考资料</summary><a href="https://tilos-ai-institute.github.io/MacroPlacement/Flows/NanGate45/ariane133/" target="_blank" rel="noopener noreferrer">Ariane 的两份人工基线和逐阶段指标 ↗</a><a href="https://openroad.readthedocs.io/en/latest/main/openroad/grt/README.html" target="_blank" rel="noopener noreferrer">OpenROAD 的全局布线和报告 ↗</a><a href="https://github.com/The-OpenROAD-Project/OpenSTA" target="_blank" rel="noopener noreferrer">OpenSTA 的时序输入与报告 ↗</a></details>
+</article><details id="glossary" class="source"><summary>随手查术语</summary><dl class="pairs"><dt>bit、B、KiB</dt><dd>1 B（字节）等于 8 bit，1 KiB 等于 1,024 B。</dd><dt>Master 与 instance</dt><dd>Master 是库里的模板，instance 是这颗芯片里用到的一个具体副本。</dd><dt>Pin、port、net、bus</dt><dd>Pin 是实例上的引脚，port 常用于模块边界端口。一条 net 表示一个电连接，bus 是一组相关信号。</dd><dt>SRAM、bank、tag</dt><dd>SRAM 存比特，bank 是存储分区，tag 是缓存为辨认地址保存的标签。</dd><dt>标准单元、硬化、IP</dt><dd>标准单元是按行摆放的基础逻辑单元。硬化是把电路做成确定的物理版图。IP 是可复用的设计模块。</dd><dt>Floorplan、placement、routing</dt><dd>分别表示规划芯片及各区块、选择实例位置、在金属层连接引脚，工程中常来回迭代。</dd><dt>PDK、LEF、DEF</dt><dd>PDK 是工艺设计套件，LEF 提供技术与单元的物理抽象，DEF 描述一个具体设计的物理状态。</dd><dt>Track、via、OBS、halo</dt><dd>轨道是可走线的位置，过孔用于跨层，OBS 是挡住布线的图形。Halo 是外扩限制区，需要看它具体限制哪些对象。</dd><dt>HPWL、overflow、slack</dt><dd>分别衡量引脚包围盒半周长、超过容量的需求、时序余量。</dd><dt>CTS、PDN、ECO</dt><dd>时钟树综合、供电网络、工程变更。后期 ECO 往往限制扰动，并对受影响部分重新签核。</dd></dl></details><div class="paging"><button id="prev">← 上一课</button><button class="primary" id="next">下一课 →</button></div></div></main></div>
+<script id="real-data" type="application/json">[["i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[0].i_ram",13920,11760,"N"],["i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[1].i_ram",136380,11760,"FN"],["i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[2].i_ram",258840,11760,"N"],["i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[3].i_ram",381320,11760,"FN"],["i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[4].i_ram",13920,281120,"N"],["i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[5].i_ram",136380,281120,"FN"],["i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[6].i_ram",258840,281120,"N"],["i_cache_subsystem/i_icache/sram_block[0].data_sram/macro_mem[7].i_ram",381320,281120,"FN"],["i_cache_subsystem/i_icache/sram_block[0].tag_sram/macro_mem[0].i_ram",136380,550480,"FN"],["i_cache_subsystem/i_icache/sram_block[0].tag_sram/macro_mem[1].i_ram",258840,550480,"N"],["i_cache_subsystem/i_icache/sram_block[0].tag_sram/macro_mem[2].i_ram",381320,550480,"FN"],["i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[0].i_ram",503780,11760,"N"],["i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[1].i_ram",626240,11760,"FN"],["i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[2].i_ram",748700,11760,"N"],["i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[3].i_ram",871160,11760,"FN"],["i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[4].i_ram",503780,281120,"N"],["i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[5].i_ram",626240,281120,"FN"],["i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[6].i_ram",748700,281120,"N"],["i_cache_subsystem/i_icache/sram_block[1].data_sram/macro_mem[7].i_ram",871160,281120,"FN"],["i_cache_subsystem/i_icache/sram_block[1].tag_sram/macro_mem[0].i_ram",626240,550480,"FN"],["i_cache_subsystem/i_icache/sram_block[1].tag_sram/macro_mem[1].i_ram",748700,550480,"N"],["i_cache_subsystem/i_icache/sram_block[1].tag_sram/macro_mem[2].i_ram",871160,550480,"FN"],["i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[0].i_ram",993640,11760,"N"],["i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[1].i_ram",1116100,11760,"FN"],["i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[2].i_ram",1238560,11760,"N"],["i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[3].i_ram",1361020,11760,"FN"],["i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[4].i_ram",993640,281120,"N"],["i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[5].i_ram",1116100,281120,"FN"],["i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[6].i_ram",1238560,281120,"N"],["i_cache_subsystem/i_icache/sram_block[2].data_sram/macro_mem[7].i_ram",1361020,281120,"FN"],["i_cache_subsystem/i_icache/sram_block[2].tag_sram/macro_mem[0].i_ram",1116100,550480,"FN"],["i_cache_subsystem/i_icache/sram_block[2].tag_sram/macro_mem[1].i_ram",1238560,550480,"N"],["i_cache_subsystem/i_icache/sram_block[2].tag_sram/macro_mem[2].i_ram",1361020,550480,"FN"],["i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[0].i_ram",1483480,11760,"N"],["i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[1].i_ram",1605940,11760,"FN"],["i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[2].i_ram",1728420,11760,"N"],["i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[3].i_ram",1850880,11760,"FN"],["i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[4].i_ram",1483480,281120,"N"],["i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[5].i_ram",1605940,281120,"FN"],["i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[6].i_ram",1728420,281120,"N"],["i_cache_subsystem/i_icache/sram_block[3].data_sram/macro_mem[7].i_ram",1850880,281120,"FN"],["i_cache_subsystem/i_icache/sram_block[3].tag_sram/macro_mem[0].i_ram",1605940,550480,"FN"],["i_cache_subsystem/i_icache/sram_block[3].tag_sram/macro_mem[1].i_ram",1728420,550480,"N"],["i_cache_subsystem/i_icache/sram_block[3].tag_sram/macro_mem[2].i_ram",1850880,550480,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[0].i_ram",13920,2436000,"N"],["i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[1].i_ram",136380,2436000,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[2].i_ram",258840,2436000,"N"],["i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[3].i_ram",381320,2436000,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[4].i_ram",13920,2166640,"N"],["i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[5].i_ram",136380,2166640,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[6].i_ram",258840,2166640,"N"],["i_cache_subsystem/i_nbdcache/sram_block[0].data_sram/macro_mem[7].i_ram",381320,2166640,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[0].tag_sram/macro_mem[0].i_ram",136380,1897280,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[0].tag_sram/macro_mem[1].i_ram",258840,1897280,"N"],["i_cache_subsystem/i_nbdcache/sram_block[0].tag_sram/macro_mem[2].i_ram",381320,1897280,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[0].i_ram",503780,2436000,"N"],["i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[1].i_ram",626240,2436000,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[2].i_ram",748700,2436000,"N"],["i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[3].i_ram",871160,2436000,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[4].i_ram",503780,2166640,"N"],["i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[5].i_ram",626240,2166640,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[6].i_ram",748700,2166640,"N"],["i_cache_subsystem/i_nbdcache/sram_block[1].data_sram/macro_mem[7].i_ram",871160,2166640,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[1].tag_sram/macro_mem[0].i_ram",626240,1897280,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[1].tag_sram/macro_mem[1].i_ram",748700,1897280,"N"],["i_cache_subsystem/i_nbdcache/sram_block[1].tag_sram/macro_mem[2].i_ram",871160,1897280,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[0].i_ram",993640,2436000,"N"],["i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[1].i_ram",1116100,2436000,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[2].i_ram",1238560,2436000,"N"],["i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[3].i_ram",1361020,2436000,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[4].i_ram",993640,2166640,"N"],["i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[5].i_ram",1116100,2166640,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[6].i_ram",1238560,2166640,"N"],["i_cache_subsystem/i_nbdcache/sram_block[2].data_sram/macro_mem[7].i_ram",1361020,2166640,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[2].tag_sram/macro_mem[0].i_ram",1116100,1897280,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[2].tag_sram/macro_mem[1].i_ram",1238560,1897280,"N"],["i_cache_subsystem/i_nbdcache/sram_block[2].tag_sram/macro_mem[2].i_ram",1361020,1897280,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[0].i_ram",1483480,2436000,"N"],["i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[1].i_ram",1605940,2436000,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[2].i_ram",1728420,2436000,"N"],["i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[3].i_ram",1850880,2436000,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[4].i_ram",1483480,2166640,"N"],["i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[5].i_ram",1605940,2166640,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[6].i_ram",1728420,2166640,"N"],["i_cache_subsystem/i_nbdcache/sram_block[3].data_sram/macro_mem[7].i_ram",1850880,2166640,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[3].tag_sram/macro_mem[0].i_ram",1605940,1897280,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[3].tag_sram/macro_mem[1].i_ram",1728420,1897280,"N"],["i_cache_subsystem/i_nbdcache/sram_block[3].tag_sram/macro_mem[2].i_ram",1850880,1897280,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[0].i_ram",1973340,2436000,"N"],["i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[1].i_ram",2095800,2436000,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[2].i_ram",2218260,2436000,"N"],["i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[3].i_ram",2340740,2436000,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[4].i_ram",1973340,2166640,"N"],["i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[5].i_ram",2095800,2166640,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[6].i_ram",2218260,2166640,"N"],["i_cache_subsystem/i_nbdcache/sram_block[4].data_sram/macro_mem[7].i_ram",2340740,2166640,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[4].tag_sram/macro_mem[0].i_ram",2095800,1897280,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[4].tag_sram/macro_mem[1].i_ram",2218260,1897280,"N"],["i_cache_subsystem/i_nbdcache/sram_block[4].tag_sram/macro_mem[2].i_ram",2340740,1897280,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[0].i_ram",2463200,2436000,"N"],["i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[1].i_ram",2585660,2436000,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[2].i_ram",2463200,2166640,"N"],["i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[3].i_ram",2585660,2166640,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[4].i_ram",2463200,1897280,"N"],["i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[5].i_ram",2585660,1897280,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[6].i_ram",2463200,1627920,"N"],["i_cache_subsystem/i_nbdcache/sram_block[5].data_sram/macro_mem[7].i_ram",2585660,1627920,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[5].tag_sram/macro_mem[0].i_ram",2340740,1358560,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[5].tag_sram/macro_mem[1].i_ram",2463200,1358560,"N"],["i_cache_subsystem/i_nbdcache/sram_block[5].tag_sram/macro_mem[2].i_ram",2585660,1358560,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[0].i_ram",1973340,11760,"N"],["i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[1].i_ram",2095800,11760,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[2].i_ram",2218260,11760,"N"],["i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[3].i_ram",2340740,11760,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[4].i_ram",1973340,281120,"N"],["i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[5].i_ram",2095800,281120,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[6].i_ram",2218260,281120,"N"],["i_cache_subsystem/i_nbdcache/sram_block[6].data_sram/macro_mem[7].i_ram",2340740,281120,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[6].tag_sram/macro_mem[0].i_ram",2585660,1089200,"N"],["i_cache_subsystem/i_nbdcache/sram_block[6].tag_sram/macro_mem[1].i_ram",2463200,1089200,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[6].tag_sram/macro_mem[2].i_ram",2340740,1089200,"N"],["i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[0].i_ram",2463200,11760,"N"],["i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[1].i_ram",2585660,11760,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[2].i_ram",2463200,281120,"N"],["i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[3].i_ram",2585660,281120,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[4].i_ram",2463200,550480,"N"],["i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[5].i_ram",2585660,550480,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[6].i_ram",2463200,819840,"N"],["i_cache_subsystem/i_nbdcache/sram_block[7].data_sram/macro_mem[7].i_ram",2585660,819840,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[7].tag_sram/macro_mem[0].i_ram",2218260,1089200,"FN"],["i_cache_subsystem/i_nbdcache/sram_block[7].tag_sram/macro_mem[1].i_ram",2095800,1089200,"N"],["i_cache_subsystem/i_nbdcache/sram_block[7].tag_sram/macro_mem[2].i_ram",1973340,1089200,"FN"],["i_cache_subsystem/i_nbdcache/valid_dirty_sram/macro_mem[0].i_ram",1850880,1089200,"N"]]</script>
+<script id="quiz-data" type="application/json">[["同一个缓存里用了 4 个 SRAM 实例，当前层单摆这几颗时要选多少个位置？",["1 个，cache 是一个功能","4 个，每个实例一个","32 个，容量是 32 KiB"],1,["一个逻辑功能可以横跨多块硅。","对。即使四颗来自同一个模板，四个实例也各占一个位置。","容量是数据量，不能直接换算成位置数。"]],["同一款控制器换库后，从 0 颗 SRAM macro 变成 2 颗，先查什么？",["综合映射报告与硬化层级","芯片照片的颜色","重新数 RTL 模块名"],0,["对。先核对数组实际映射成触发器还是 SRAM，以及在哪层可见。","颜色不能决定实现类型。","模块名只告诉你逻辑组织。"]],["想知道某 SRAM 的写掩码引脚在哪一层、靠哪条边，先开哪份文件？",["时钟约束 SDC","宏 LEF","只看实例名"],1,["SDC 管时序意图。","对。在 LEF 里找 PIN、PORT、LAYER 和 RECT。","实例名没有引脚几何。"]],["两颗同模板 SRAM 的左下角横坐标相差 61.230 µm，模板宽 57.570 µm。它们之间的净距是多少？",["61.230 µm","3.660 µm","57.570 µm"],1,["这是两个锚点的间距。","对。先统一单位，再从锚点差里扣掉左侧宏的宽度。","这是物体宽度。"]],["共享复位连到几乎所有宏。仅凭它能否断定 A 与 B 应贴在一起？",["能，因为是同一条 net","先看专属数据通路和关键路径"],1,["一个全局网会让大量无关实例看起来都相连。","对。功能分组还要看专属接口及物理位置。"]],["凹形 core 内，宏的四个角都在合法区域，能否直接过检？",["可以，四个角够了","还要查整个轮廓与凹口、障碍的交叠"],1,["若凹槽穿过宏的中段，四个角都可能在区内。","对。矩形与区域做包含或差集检查更可靠。"]],["宏中心不动，左右镜像后，哪项一定保持原值（以中心为位移基准）？",["引脚到控制器的距离","宏中心位移","局部引脚可达性"],1,["引脚位置可以变。","对。中心位移看不到镜像带来的引脚变化。","可达性受引脚位置和障碍影响。"]],["看到 Apple 的成品图里缓存靠近 CPU，可以直接断言工程师按某套顺序手摆吗？",["可以还原顺序","成品图能看相对位置，过程要查脚本或作者复盘"],1,["多个不同过程可以产生类似外形。","对。区分看见的结果和有记录的决定。"]],["三个 pin 的包围盒没变，宏挡住了最短路径。哪项可能保持不变？",["实际布线长度","HPWL","所有路径延时"],1,["绕行可以加长走线。","对。定包围盒的极值未变，HPWL 就不会发现这个障碍。","延时还受电阻、电容、缓冲和负载影响。"]],["一颗宏不连经过红格的任何网，还可能是搬移候选吗？",["有可能，它可能占掉通道容量","只能搬这些网的端点宏"],0,["对。分别追踪谁带来需求、谁限制容量，再做对照。","只追端点会漏掉挡路的宏。"]],["只翻转 A，位移为 0，overflow 却变化。最直接的解释是什么？",["移动统计必然坏了","引脚换边，使线束占用的边变了"],1,["这里位移用宏锚点，两种量的对象不同。","对。检查 A 的金色引脚和行内重合的线束。"]],["详细布线在 SRAM 的几个引脚附近报错，但整块总 overflow 是 0。下一步看哪里？",["查这些引脚的接入层、过孔和邻近障碍","只继续压低 HPWL"],0,["对。某个 pin 接不进去，与全局平均容量是不同尺度的问题。","HPWL 很难识别局部引脚接入问题。"]],["比较两代芯片时，发现后一代 SRAM 数都变了。能把面积改善直接归给 pack 吗？",["能，版图更紧凑","先固定宏集合，或分开评估实现变化"],1,["宏本身的面积和接口都可能变化。","对。相同对象、约束和评估流程才适合比较位置优化。"]],["关掉 Q 值后质量相同，但关闭前瞻后明显变差。这组试验直接支持哪项判断？",["目前样本和预算下，前瞻贡献较明显","一切 RL 对任何 pack 都无用"],0,["对。还应看跨设计、种子、状态重访率和耗时。","这个结论超出了试验范围。"]],["只改候选排序就把 myrudy 算了，现在最终成品一定会改善吗？",["一定会","还要测真实落点、筛选、奖励以及最终布线"],1,["可能排序后根本没改变决策，也可能代理目标偏了。","对。用逐动作日志确认介入点，用最终盘面确认结果。"]],["热点 H 被消掉了，旁边 H₂ 更严重，全片总 overflow 还上升。该怎样记这次结果？",["成功，只要 H 下降即可","记录热点转移，按事先约定的全片门槛接受或回退"],1,["局部改善不能单独代表成品改善。","对。保留失败样本有助于下轮换组和改归因。"]],["若验收要求线长下降且 TNS 不退化，可以直接交表中的 B 吗？",["可以，最坏路径略好","不能按这个门槛交，B 的 TNS 更负"],1,["最差余量与所有负余量之和反映不同问题。","对。记录取舍，重新优化或由负责人明确改变门槛。"]],["两张热图自动使用了不同色标，还能单靠颜色深浅判断哪张改善吗？",["可以，较淡的就是好","要固定色标、层与网格，并比较原始数值"],1,["自动缩放会让相同数值呈现不同颜色。","对。重画同口径图，并保留原始报告。"]],["真实工程里，最能支持把这次方法交给组内使用的凭据是什么？",["这次网页拿到最低分","跨设计按同口径验证，有失败边界、约束与回退记录","截图比以前整齐"],1,["教学模型只覆盖了少量现象。","对。别人应能重跑、发现失效条件，并核查改进来自哪里。","外观不足以说明可布性和时序。"]]]</script>
+<script>'use strict';
+const articles = [...document.querySelectorAll('.lesson')];
+const byId = id => document.getElementById(id);
+const stateKey = 'macro-course-zh-v1';
+let saved = {};
+let canStore = true;
+try { saved = JSON.parse(localStorage.getItem(stateKey) || '{}') || {}; } catch { canStore = false; }
+if (typeof saved !== 'object' || Array.isArray(saved)) saved = {};
+function save() { try { localStorage.setItem(stateKey, JSON.stringify(saved)); } catch { canStore = false; } }
+const answers = Array.isArray(saved.answers) ? saved.answers : [];
+const realRows = JSON.parse(byId('real-data').textContent);
+const quizData = JSON.parse(byId('quiz-data').textContent);
+let current = 0;
+function progress() {
+  const count = quizData.filter((q,i) => answers[i] === q[2]).length;
+  byId('progressnote').textContent = '随堂题  ' + count + ' / ' + articles.length;
+  byId('progressfill').style.width = (100*count/articles.length)+'%';
+  document.querySelectorAll('.toc a').forEach((a,i) => {
+    const ok=answers[i]===quizData[i][2];
+    a.classList.toggle('done',ok);
+    a.querySelector('.ix').textContent=ok?'✓':String(i+1).padStart(2,'0');
+  });
+}
+function showQuiz(i) {
+  const box=articles[i].querySelector('.quiz');
+  const idx=answers[i], q=quizData[i];
+  const valid=Number.isInteger(idx)&&idx>=0&&idx<q[1].length;
+  const out=box.querySelector('.feedback');
+  out.textContent=valid?q[3][idx]:'';
+  out.classList.toggle('wrong', valid && idx!==q[2]);
+  box.querySelectorAll('button').forEach((b,j)=>b.setAttribute('aria-pressed',String(valid&&j===idx)));
+}
+articles.forEach((a,i)=>a.querySelectorAll('.quiz button').forEach((b,j)=>b.addEventListener('click',()=>{
+  answers[i]=j; saved.answers=answers; save(); showQuiz(i);progress();
+})));
+function show(i,focus) {
+  current=i;
+  articles.forEach((a,j)=>a.hidden=j!==i);
+  document.querySelectorAll('.toc a').forEach((a,j)=>j===i?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+  byId('mobile-nav').value=String(i);
+  byId('breadcrumb').textContent=articles[i].dataset.group+'  /  '+articles[i].querySelector('h1').textContent;
+  byId('where').textContent=(i+1)+' / '+articles.length;
+  byId('prev').disabled=i===0;
+  byId('next').textContent=i===articles.length-1?'返回第一课':'下一课 →';
+  saved.last=i;save();showQuiz(i);progress();
+  window.scrollTo(0,0);
+  if(focus)articles[i].focus({preventScroll:true});
+}
+function go(i) {
+  i=Math.max(0,Math.min(articles.length-1,i));
+  if(location.hash==='#'+articles[i].id) show(i,true);
+  else location.hash=articles[i].id;
+}
+function hashIndex() {return articles.findIndex(a=>location.hash==='#'+a.id);}
+window.addEventListener('hashchange',()=>{const i=hashIndex();if(i>=0)show(i,true);});
+byId('mobile-nav').addEventListener('change',e=>go(Number(e.target.value)));
+byId('prev').onclick=()=>go(current-1);
+byId('next').onclick=()=>go(current===articles.length-1?0:current+1);
+byId('skip').onclick=e=>{e.preventDefault();articles[current].focus();};
+function setupLayers() {
+  const el=byId('layers');
+  el.innerHTML='<div class="panel"><div class="panel-body"><div class="diagram"><div class="diagram-head"><strong>32 KiB 数据缓存</strong><span>CPU / L1</span></div><div class="die"><div class="controller"></div><div class="bus"></div><div class="banks"></div></div><div class="caption" aria-live="polite"></div></div><div class="controls"><button>看功能</button><button>看要摆的对象</button></div></div></div>';
+  function render(i){
+    const banks=el.querySelector('.banks');
+    banks.classList.toggle('one',i===0);
+    banks.innerHTML=i===0?'<span>数据数组</span>':['A','B','D','F'].map(c=>'<span>'+c+' · 8 KiB</span>').join('');
+    el.querySelector('.controller').textContent=i===0?'缓存控制器':'控制器逻辑';
+    el.querySelector('.caption').textContent=i===0?'一次读取：控制器给出地址，数据数组返回数据。':'一个功能映射成四颗 SRAM，加上一片标准单元逻辑。';
+    el.querySelectorAll('button').forEach((b,j)=>b.setAttribute('aria-pressed',String(i===j)));
+  }
+  el.querySelectorAll('button').forEach((b,i)=>b.onclick=()=>render(i));render(0);
+}
+function canvasClick(canvas,event) {
+  const r=canvas.getBoundingClientRect();
+  return [(event.clientX-r.left)*canvas.width/r.width,(event.clientY-r.top)*canvas.height/r.height];
+}
+function setupReal() {
+  const root=byId('real-map');
+  root.innerHTML='<div class="panel"><div class="panel-body"><div class="controls"><label>显示范围<select class="filter"><option value="all">全部 SRAM</option><option value="ic">指令缓存</option><option value="dc">数据缓存</option></select></label><label>选择实例<select class="pick"></select></label></div><div class="realgrid"><canvas class="plot" width="580" height="580" aria-label="Ariane133 全部 SRAM 盘面。也可用上方菜单选择相同实例。"></canvas><div class="realinfo" aria-live="polite"></div></div><div class="legend">青色为指令缓存，浅米色为数据缓存，橙框为选中实例。坐标从左下角起算。</div></div></div>';
+  const cvs=root.querySelector('canvas'), cx=cvs.getContext('2d'), filter=root.querySelector('.filter'), pick=root.querySelector('.pick');
+  const type=r=>r[0].includes('i_icache/')?'ic':'dc';
+  let selected=0;
+  const scale=544/2714720, left=18, bottom=562;
+  const width=115140*scale, height=266000*scale;
+  function rect(r){return [left+r[1]*scale,bottom-r[2]*scale-height,width,height];}
+  const allowed=r=>filter.value==='all'||type(r)===filter.value;
+  function draw(){
+    cx.fillStyle='#143638';cx.fillRect(0,0,580,580);cx.strokeStyle='#a9c7b2';cx.lineWidth=1;cx.strokeRect(left,bottom-2713760*scale,544,2713760*scale);
+    const render=(r,i)=>{
+      const [x,y,w,h]=rect(r), on=allowed(r);
+      cx.fillStyle=on?(type(r)==='ic'?'#75b496':'#d7caa3'):'#2b4c48';
+      cx.fillRect(x,y,w,h);cx.strokeStyle='#233d39';cx.lineWidth=1;cx.strokeRect(x,y,w,h);
+      if(on){
+        const px=r[3]==='N'?x+1:x+w-2;
+        cx.fillStyle='#6d4823';cx.fillRect(px,y+h-5,2.2,4);
+      }
+      if(i===selected){cx.strokeStyle='#f29a60';cx.lineWidth=4;cx.strokeRect(x-1,y-1,w+2,h+2);}
+    };
+    realRows.forEach((r,i)=>{if(i!==selected)render(r,i);});render(realRows[selected],selected);
+    pick.value=String(selected);const r=realRows[selected]; const info=root.querySelector('.realinfo');
+    info.replaceChildren();
+    const title=document.createElement('b');title.textContent=(type(r)==='ic'?'指令缓存':'数据缓存')+' · '+r[3];
+    const code=document.createElement('code');code.textContent=r[0];
+    const p=document.createElement('p');p.textContent='锚点 ('+(r[1]/2000).toFixed(3)+', '+(r[2]/2000).toFixed(3)+') µm。尺寸 57.570 × 133.000 µm。写掩码样例引脚在'+(r[3]==='N'?'左':'右')+'边。';
+    const n=document.createElement('small');n.textContent='筛选得到 '+realRows.filter(allowed).length+' / 133 颗。DEF 状态为 FIXED。';
+    info.append(title,code,p,n);
+  }
+  function refill(){
+    pick.replaceChildren();
+    realRows.forEach((r,i)=>{if(!allowed(r))return;const opt=new Option('#'+(i+1)+' · '+(type(r)==='ic'?'I$':'D$')+' · '+r[3],i);pick.add(opt);});
+    if(!allowed(realRows[selected]))selected=Number(pick.options[0].value);
+    draw();
+  }
+  filter.onchange=refill;pick.onchange=()=>{selected=Number(pick.value);draw();};
+  cvs.onclick=e=>{const [px,py]=canvasClick(cvs,e);const i=realRows.findIndex(r=>{const [x,y,w,h]=rect(r);return allowed(r)&&px>=x&&px<=x+w&&py>=y&&py<=y+h;});if(i>=0){selected=i;draw();}};refill();
+}
+
+const startBoard=()=>({A:{x:4,y:4,face:'W'}, B:{x:7,y:5,face:'W'}});
+const coreWidth=12,coreHeight=8;
+const fixedPoints=[{x:0,y:4,n:'W'},{x:11,y:4,n:'E'},{x:9,y:2,n:'C'},{x:1,y:6,n:'P'}];
+const bankIds=['A','B'];
+function inside(m,x,y){return x>=m.x && x<m.x+2 && y>=m.y && y<m.y+2;}
+function illegal(board){
+  for(const id of bankIds){
+    const m=board[id];
+    if(!m||!Number.isInteger(m.x)||!Number.isInteger(m.y)||!['W','E'].includes(m.face))return '无效坐标或朝向';
+    if(m.x<0||m.x+2>coreWidth||m.y<0||m.y+2>coreHeight)return id+' 的外框越过 core';
+    const p=fixedPoints.find(p=>inside(m,p.x,p.y));if(p)return id+' 会压住固定对象 '+p.n;
+  }
+  const {A,B}=board;
+  if(A.x<B.x+2&&A.x+2>B.x&&A.y<B.y+2&&A.y+2>B.y)return 'A、B 的外框重叠';
+  return '';
+}
+function cloneBoard(b){return {A:{...b.A},B:{...b.B}};}
+function pin(m){return [m.x+(m.face==='E'?1:0),m.y];}
+function evaluateBoard(board){
+  const edges=new Map();
+  const stems=[['W–E',[0,4],[11,4],5],['A–C',pin(board.A),[9,2],4],['B–C',pin(board.B),[9,2],2]];
+  let length=0;
+  function visit(x,y,nx,ny,name,weight){
+    const sx=Math.min(x,nx), sy=Math.min(y,ny), dir=x===nx?'V':'H';const key=dir+'/'+sx+'/'+sy;
+    if(!edges.has(key)){
+      const block=bankIds.find(id=>inside(board[id],x,y)&&inside(board[id],nx,ny));
+      edges.set(key,{x:sx,y:sy,dir,cap:block?2:6,block,demand:0,nets:[]});
+    }
+    const e=edges.get(key);e.demand+=weight;e.nets.push([name,weight]);length+=weight;
+  }
+  for(const [name,from,to,w] of stems){
+    let [x,y]=from;
+    while(x!==to[0]){const nx=x+Math.sign(to[0]-x);visit(x,y,nx,y,name,w);x=nx;}
+    while(y!==to[1]){const ny=y+Math.sign(to[1]-y);visit(x,y,x,ny,name,w);y=ny;}
+  }
+  const ranked=[...edges.values()].map(e=>({...e,over:Math.max(0,e.demand-e.cap)})).sort((a,b)=>b.over-a.over||b.demand-a.demand);
+  const origins=startBoard();
+  const move=bankIds.reduce((v,id)=>v+Math.abs(board[id].x-origins[id].x)+Math.abs(board[id].y-origins[id].y),0);
+  return {ranked,length,move,total:ranked.reduce((s,e)=>s+e.over,0),worst:ranked[0].over};
+}
+const baseline=evaluateBoard(startBoard());
+let board=startBoard(), selectedBank='A', previous=null;
+try{if(saved.board && !illegal(saved.board))board=cloneBoard(saved.board);}catch{}
+const labs=[];
+function paintLab(cvs,view) {
+  const ctx=cvs.getContext('2d');const cell=44,left=31,bottom=356;
+  const X=x=>left+x*cell, Y=y=>bottom-y*cell;
+  ctx.fillStyle='#143638';ctx.fillRect(0,0,cvs.width,cvs.height);
+  ctx.lineWidth=.9;ctx.strokeStyle='#3e6261';
+  for(let x=0;x<=12;x++){ctx.beginPath();ctx.moveTo(X(x-.5),Y(-.5));ctx.lineTo(X(x-.5),Y(7.5));ctx.stroke();}
+  for(let y=0;y<=8;y++){ctx.beginPath();ctx.moveTo(X(-.5),Y(y-.5));ctx.lineTo(X(11.5),Y(y-.5));ctx.stroke();}
+  function box(b,id){
+    ctx.fillStyle=id==='A'?'#427e71':'#48687a';ctx.fillRect(X(b.x-.46),Y(b.y+1.46),cell*1.92,cell*1.92);
+    ctx.strokeStyle=id===selectedBank?'#f2daa6':'#a9c7b2';ctx.lineWidth=id===selectedBank?2.8:1;ctx.strokeRect(X(b.x-.46),Y(b.y+1.46),cell*1.92,cell*1.92);
+  }
+  bankIds.forEach(id=>box(board[id],id));
+  ctx.lineCap='round';
+  for(const e of view.ranked.slice().reverse()){
+    ctx.lineWidth=e.over?5:2.5;ctx.strokeStyle=e.over?'#ff9b6c':'#8dc5b0';
+    ctx.beginPath();ctx.moveTo(X(e.x),Y(e.y));ctx.lineTo(X(e.x+(e.dir==='H'?1:0)),Y(e.y+(e.dir==='V'?1:0)));ctx.stroke();
+  }
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='bold 18px monospace';
+  for(const p of fixedPoints){ctx.fillStyle='#243e46';ctx.fillRect(X(p.x)-13,Y(p.y)-13,26,26);ctx.fillStyle='#fff5dc';ctx.fillText(p.n,X(p.x),Y(p.y));}
+  for(const id of bankIds){
+    const b=board[id], [px,py]=pin(b);
+    ctx.fillStyle='#f7ce72';ctx.fillRect(X(px)-4,Y(py)-4,8,8);
+    ctx.fillStyle='#f1f8f3';ctx.font='bold 21px monospace';ctx.fillText(id,X(b.x+.5),Y(b.y+.85));
+  }
+  ctx.font='12px monospace';ctx.fillStyle='#bed3c8';
+  for(let x=0;x<coreWidth;x++)ctx.fillText(String(x),X(x),391);
+  ctx.textAlign='left';ctx.fillText('y=7',10,12);
+}
+function labAction(fn,note){
+  const proposed=cloneBoard(board);fn(proposed);
+  const bad=illegal(proposed);
+  if(bad){drawLabs('这一步没有落下。'+bad+'。');return;}
+  previous=cloneBoard(board);board=proposed;saved.board=cloneBoard(board);save();drawLabs(note);
+}
+function resetBoard(){labAction(b=>Object.assign(b,startBoard()),'已恢复初始盘。');}
+function drawLabs(note){
+  const v=evaluateBoard(board);
+  for(const root of labs){
+    paintLab(root.querySelector('canvas'),v);
+    root.querySelector('.bank').value=selectedBank;
+    root.querySelector('.pose').textContent=bankIds.map(id=>id+' ('+board[id].x+', '+board[id].y+') '+(board[id].face==='W'?'朝左':'朝右')).join('　');
+    const metric=(name,n,base,unit)=>'<div class="metric"><small>'+name+'</small><b>'+n+'</b><em>'+unit+' · 初始 '+base+'</em></div>';
+    root.querySelector('.readouts').innerHTML=metric('总 overflow',v.total,baseline.total,'轨道')+metric('总位移',v.move,0,'格')+metric('加权线长',v.length,baseline.length,'轨道·格');
+    const e=v.ranked[0];
+    root.querySelector('.edgetext').textContent=(v.worst?'最坏边':'最高需求边')+' '+e.dir+' ('+e.x+', '+e.y+')，需求 '+e.demand+'，容量 '+e.cap+'，超出 '+e.over+'。线束 '+e.nets.map(([n,w])=>n+' × '+w).join('、')+'。'+(e.block?'这条边在 '+e.block+' 内部。':'这条边使用普通容量。');
+    root.querySelector('[data-act="undo"]').disabled=!previous;
+    if(note!==undefined)root.querySelector('.readoutlog').textContent=note;
+    const test=root.querySelector('.cap-result');
+    if(test){test.textContent='';test.classList.remove('warn');}
+  }
+}
+function setupLab(id,cap){
+  const root=byId(id);labs.push(root);root.className='panel';
+  root.innerHTML='<div class="panel-body"><h3>'+ (cap?'提交你的重摆方案':'缓存通道实验台')+'</h3><div class="mini pose"></div><canvas class="plot" width="552" height="405" aria-label="带坐标的缓存盘面，金色方点是 SRAM 引脚，操作后可读下方各边数据。"></canvas><div class="legend">绿色为使用中的边，橙色为超载边，金点是 SRAM 引脚。可以点宏来选中。</div><div class="readouts"></div><div class="controls"><label>操作对象 <select class="bank"><option>A</option><option>B</option></select></label></div><div class="controls moves"><button data-act="left" aria-label="向左一格">← 左</button><button data-act="right" aria-label="向右一格">右 →</button><button data-act="up" aria-label="向上一格">↑ 上</button><button data-act="down" aria-label="向下一格">↓ 下</button><button data-act="flip">左右翻转</button></div><div class="controls"><button data-act="undo">撤回一步</button><button data-act="reset">恢复初始盘</button></div><div class="readoutlog muted" role="status"></div><div class="edgetext"></div><details><summary>展开手算规则</summary><p>W(0,4) 到 E(11,4) 占 5 条轨道；A、B 的引脚到 C(9,2) 分别占 4 和 2 条。两个引脚都用宏底排，左右翻转换到另一侧。每束线先水平后垂直，每条普通边容量 6；两端格心均在同一颗 SRAM 内的边容量 2。P 仅作摆放禁区。总 overflow 为各边正超量之和，加权线长为每束线的格长乘轨道数后求和。这个模型没有绕行或换层。</p></details>'+(cap?'<div class="controls"><button class="primary" data-act="grade">检查当前方案</button></div><div class="cap-result feedback" role="status"></div>':'')+'</div>';
+  root.querySelector('.bank').onchange=e=>{selectedBank=e.target.value;drawLabs('已选 '+selectedBank+'。');};
+  root.querySelector('canvas').onclick=e=>{const [px,py]=canvasClick(e.currentTarget,e);const x=Math.floor((px-31)/44+.5),y=Math.floor((356-py)/44+.5);const id=bankIds.find(i=>inside(board[i],x,y));if(id){selectedBank=id;drawLabs('已选 '+id+'。');}};
+  const delta={left:[-1,0],right:[1,0],up:[0,1],down:[0,-1]};
+  root.addEventListener('click',e=>{
+    const act=e.target.closest('[data-act]')?.dataset.act;if(!act)return;
+    if(act==='reset')return resetBoard();
+    if(act==='undo' && previous){board=previous;previous=null;saved.board=cloneBoard(board);save();drawLabs('已撤回上一步。');return;}
+    if(act==='grade'){
+      const v=evaluateBoard(board),pass=v.total===0&&v.move<=2;
+      const target=root.querySelector('.cap-result');target.classList.toggle('warn',!pass);
+      target.textContent=(pass?'本盘通过。':'还可继续试摆。')+' 当前 overflow '+v.total+'，位移 '+v.move+' 格。'+(pass?'请写下基线、因果和一次失败尝试。':(v.total?'先看列出的最坏边是否仍穿过 A。':'拥塞已消除，再缩小扰动范围。'));return;
+    }
+    if(act==='flip')return labAction(b=>{const m=b[selectedBank];m.face=m.face==='W'?'E':'W';},selectedBank+' 已镜像。');
+    if(delta[act])labAction(b=>{b[selectedBank].x+=delta[act][0];b[selectedBank].y+=delta[act][1];},'已更新 '+selectedBank+' 的位置。');
+  });
+}
+function setupNotebook(){
+  const root=byId('notebook');root.className='panel';
+  root.innerHTML='<div class="panel-body"><label class="fieldlabel" for="reviewnote">我的布局评审</label><textarea id="reviewnote" placeholder="原盘哪里拥塞？我试过什么？哪项指标改变？真实芯片还需要哪项验证？"></textarea><div class="controls"><button class="export">下载评审记录</button></div><small class="savemsg" role="status"></small></div>';
+  const input=byId('reviewnote');input.value=typeof saved.note==='string'?saved.note:'';
+  const status=root.querySelector('.savemsg');
+  const msg=()=>status.textContent=canStore?'草稿保存在当前浏览器。':'当前浏览器未允许本地存储，可下载记录。';
+  input.oninput=()=>{saved.note=input.value;save();msg();};msg();
+  root.querySelector('.export').onclick=()=>{
+    const v=evaluateBoard(board);const lines=['# Macro 布局评审','','## 教学盘面','',
+      '初始盘：overflow '+baseline.total+'，位移 0，加权线长 '+baseline.length+'。',
+      '当前盘：overflow '+v.total+'，位移 '+v.move+'，加权线长 '+v.length+'。',
+      ...bankIds.map(id=>id+'：('+board[id].x+', '+board[id].y+')，引脚方向 '+board[id].face+'。'),
+      '盘面条件：'+(v.total===0&&v.move<=2?'满足':'未满足')+'。','','## 我的判断','',input.value];
+    const url=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/markdown;charset=utf-8'}));
+    const a=document.createElement('a');a.href=url;a.download='macro-layout-review.md';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  };
+}
+setupLayers();setupReal();setupLab('practice-lab',false);setupLab('cap-lab',true);drawLabs('');setupNotebook();
+const startHash=hashIndex();show(startHash>=0?startHash:(Number.isInteger(saved.last)&&saved.last>=0&&saved.last<articles.length?saved.last:0),false);
+</script></body></html>
