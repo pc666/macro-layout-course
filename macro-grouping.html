@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f6f4ed">
+<title>Macro 怎么分组？｜TVLSI 论文图解</title>
+<style>
+:root{--paper:#f6f4ed;--card:#fffefa;--ink:#182f31;--muted:#536866;--edge:#cdd3c9;--teal:#00695e;--acqua:#daeee6;--rust:#944825;--peach:#fbe5ce;--mono:"IBM Plex Mono",Consolas,monospace;--sans:"Source Sans 3","PingFang SC","Microsoft YaHei",system-ui,sans-serif;--serif:"Source Han Serif SC","Noto Serif CJK SC","Songti SC",SimSun,Georgia,serif}
+*{box-sizing:border-box}html{scroll-padding-top:16px}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.75 var(--sans)}button,input,select{font:inherit;color:inherit}button,select{cursor:pointer}a{color:var(--teal);text-underline-offset:3px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #a44e23;outline-offset:3px}button{border:1px solid var(--edge);background:white;border-radius:6px;min-height:42px;padding:6px 12px}button[aria-pressed=true],.next{background:var(--teal);border-color:var(--teal);color:#fff}button:disabled{opacity:.45;cursor:default}
+.frame{max-width:1100px;margin:auto;padding:0 32px}.mast{border-bottom:1px solid var(--edge);padding:15px 0}.mast .frame{display:flex;align-items:center;justify-content:space-between;gap:12px}.mark{font:700 14px var(--mono);letter-spacing:.06em}.mast a{font-size:13px}.intro{padding:26px 0 21px;display:grid;grid-template-columns:1fr 330px;align-items:center;gap:40px;border-bottom:1px solid var(--edge)}h1,h2,h3,p,figure{margin:0}h1,h2{font-family:var(--serif);line-height:1.25}h1{font-size:clamp(34px,5vw,60px);letter-spacing:-.055em}.intro p{color:var(--muted);margin-top:9px;max-width:39em}.route{font-size:13px;color:var(--teal);border-left:2px solid var(--teal);padding-left:16px}.route strong{display:block;color:var(--ink);font-size:15px}.layout{display:grid;grid-template-columns:186px minmax(0,1fr);gap:36px;align-items:start;margin:26px 0 44px}.steps{display:grid;gap:4px;position:sticky;top:15px}.steps a{text-decoration:none;color:var(--muted);display:flex;gap:12px;align-items:center;padding:9px 11px;border-radius:5px}.steps i{font:12px var(--mono);font-style:normal}.steps a[aria-current=step]{color:var(--teal);background:#dfebe2;font-weight:700}.sheet{min-width:0}.part{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:clamp(18px,3.3vw,38px)}[hidden]{display:none!important}
+.ref{font:600 12px var(--mono);color:var(--teal);letter-spacing:.08em;margin-bottom:9px}h2{font-size:clamp(26px,3vw,38px);letter-spacing:-.04em}.lead{color:var(--muted);margin:12px 0 18px}.part p+p,.part figure+p,.part .example+p{margin-top:12px}h3{font-size:17px;margin:20px 0 5px}.figure{background:#f1f5ee;border:1px solid #d7dfd5;border-radius:8px;padding:12px 10px;margin:14px 0}.figure svg{display:block;width:100%;max-width:480px;height:auto;margin:0 auto}.caption{margin:7px auto 0;color:var(--muted);font-size:13px;text-align:center}.controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0}.controls button{font-size:14px}.answer{border-left:3px solid var(--teal);padding:6px 13px;background:#edf5ee;margin:12px 0}.small{font-size:14px;color:var(--muted)}code,.mono{font-family:var(--mono);font-size:.94em;overflow-wrap:anywhere}.formula{font:600 15px/1.9 var(--mono);background:#203b39;color:#f7f8ed;padding:12px 16px;border-radius:6px;margin:12px 0}.readout{font:600 15px var(--mono);color:var(--teal)}.slider{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px;margin:12px 0}.slider input{grid-column:1/-1;width:100%;margin:3px 0;accent-color:var(--teal)}.smallselect{font-size:15px;max-width:100%;padding:4px 7px;border:1px solid var(--edge);border-radius:4px;background:white}
+table{border-collapse:collapse;width:100%;margin:10px 0;text-align:left;font-size:14px;font-variant-numeric:tabular-nums}th,td{padding:6px 8px;border-bottom:1px solid var(--edge);vertical-align:middle}thead{color:var(--muted)}.chosen{background:var(--acqua)}.denied{color:var(--rust)}.panelnav{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:14px 1px}.panelnav button{font-size:14px}.folio{font:12px var(--mono);color:var(--muted)}.sources{font-size:13px;color:var(--muted);padding:12px 0;border-top:1px solid var(--edge)}details{margin-top:15px;border-top:1px solid var(--edge);padding-top:9px}summary{cursor:pointer;color:var(--teal);font-weight:600}details p{margin-top:8px}.node{fill:#fffefa;stroke:#7f9790;stroke-width:1.4}.macro{fill:var(--acqua);stroke:var(--teal);stroke-width:1.6}.cell{fill:var(--peach);stroke:var(--rust);stroke-width:1.4}.inactive{opacity:.12}.wire{stroke:#839992;stroke-width:1.8;fill:none}.activewire{stroke:var(--teal);stroke-width:2.8;fill:none}svg text{fill:var(--ink);font:15px var(--sans)}svg .name{font:600 15px var(--mono)}svg .tiny{font:12px var(--sans);fill:var(--muted)}svg .on{fill:var(--teal)}svg .burn{fill:var(--rust)}
+@media(max-width:800px){.frame{padding:0 17px}.intro{grid-template-columns:1fr;gap:10px;padding:18px 0}.route{display:none}.layout{grid-template-columns:minmax(0,1fr);gap:12px;margin:12px 0 26px}.steps{position:static;display:flex;gap:2px}.steps a{justify-content:center;flex:1;gap:4px;padding:8px 2px;font-size:13px;white-space:nowrap}.steps i{display:none}.mast{padding:9px 0}.part{padding:17px}.figure{padding:7px 5px}.lead{margin-bottom:12px}.panelnav{padding-top:10px}th,td{padding:5px 3px}.sources{font-size:12px}}
+@media print{.frame{max-width:none}.steps,.panelnav,.mast,.controls,.slider,.smallselect{display:none}.part[hidden]{display:block!important}.part{break-inside:avoid;margin:15px 0}.layout{display:block}.intro{display:block}}
+</style>
+</head>
+<body><header class="mast"><div class="frame"><span class="mark">MACRO 布局手册</span><a href="https://doi.org/10.1109/TVLSI.2021.3057921">TVLSI 2021 原文 ↗</a></div></header>
+<main class="frame">
+<div class="intro"><div><h1>Macro 怎么分组？</h1><p>从四颗 SRAM 的实例名出发，看层次树如何帮标准单元留地方，哪些 macro 最终能合组，以及数据流从哪里进入摆放。</p></div><div class="route"><strong>《Dataflow-Aware Macro Placement》精读</strong>第 III 节 · Macro Grouping<br>延伸至第 VII 节 · Dataflow</div></div>
+<div class="layout"><nav class="steps" aria-label="课程步骤">
+<a href="#inputs"><i>01</i>输入</a><a href="#tree"><i>02</i>建树</a><a href="#area"><i>03</i>分面积</a><a href="#groups"><i>04</i>合组</a><a href="#flow"><i>05</i>用数据流</a></nav>
+<div class="sheet">
+<section class="part" id="inputs"><div class="ref">§ III → § VII</div><h2>工具从哪里知道数据往哪走？</h2><p class="lead">作者明确写的是，电路设计者提供 dataflow constraint，摆放工具据此建数据流图（DFG）。论文给出了如何使用这份约束；它的文件格式和设计者生成它的过程，文中没有交代。</p>
+<div class="figure"><svg viewBox="0 0 360 165" role="img" aria-label="相同层次实例名与两种假设的数据方向"><text x="20" y="24" class="tiny">来自 Verilog 的层次路径</text><text x="20" y="50" class="name">A3/B1/N4/s0</text><text x="20" y="73" class="name">A3/B1/N7/s3</text><path class="wire" d="M20 87H340"/><text x="20" y="108" class="tiny">另行提供的模块级约束</text><rect class="macro" x="45" y="117" width="64" height="35" rx="5"/><rect class="macro" x="251" y="117" width="64" height="35" rx="5"/><text class="name" x="77" y="140" text-anchor="middle">N4</text><text class="name" x="283" y="140" text-anchor="middle">N7</text><path class="activewire" d="M115 135H245"/><path id="direction_tip" fill="#00695e" d="M245 135l-10 -6v12z"/></svg>
+<figcaption class="caption">路径是本课构造的例子。N4 → N7 取自论文图 8(b)。</figcaption></div>
+<div class="controls" id="direction_controls"><button type="button" data-dir="forward" aria-pressed="true">按论文方向</button><button type="button" data-dir="reverse" aria-pressed="false">假设方向反过来</button></div>
+<p class="answer" id="direction_note" aria-live="polite"></p><p>从 <code>A3/B1/N4/s0</code> 可以读出一条归属关系：实例 s0 在模块 N4 里。两份设计完全可以有相同的实例名，却有不同的数据传输方向。因此，工具还需要一份说明“谁向谁送数据”的输入。图 8 每个节点代表一个模块，作者为同一设计层次深度的模块建立 DFG。</p>
+<p class="small">下面四颗 SRAM 的名称、面积、连接数及初始坐标都是教学算例。原文规则标有节号与公式号。</p></section>
+<section class="part" id="tree" hidden><div class="ref">§ III-A · 图 4</div><h2>先让 macro 长出一棵树</h2><p class="lead">工具从根出发，沿着每颗 macro 实例名里的斜杠逐层查找。已有的节点复用，缺的节点补上。于是共用路径的 macro 自然共享一段树枝。</p>
+<div class="controls" id="tree_controls" aria-label="逐步建树"></div>
+<div class="figure"><svg id="tree_svg" viewBox="0 0 360 227" role="img" aria-label="本步已建立的层次树和标准单元的归属"></svg><figcaption class="caption">方框是模块，绿色叶子是 macro，橙色标记是挂在节点上的标准单元面积。</figcaption></div>
+<p class="answer" id="tree_note" aria-live="polite"></p>
+<h3>为什么要先扫完所有 macro？</h3><p>树的分叉由 macro 的路径决定。随后才读标准单元的名字，沿现有树往下走，停在能匹配的最深节点。一个模块内部即使有成千上万个标准单元，这一步只需知道它们的面积应归到哪个节点。原文的例子中，macro 是 <code>A1/B1/C1</code>，标准单元是 <code>A1/B1/C4</code>，后者挂在 <code>B1</code>。</p></section>
+<section class="part" id="area" hidden><div class="ref">§ III-A · 面积预留</div><h2>沿树向下分，沿路径累加</h2><p class="lead">在教学树中，挂在 B1 的标准单元面积由四颗 SRAM 均分；挂在 N4 的面积只由 s0、s1、s2 均分。每个有面积的节点，都把自己的份额直接分给所有后代 macro 叶子。</p>
+<label class="slider">挂在 N4 的标准单元总面积 <output id="n4_out" for="n4_area" class="readout">60</output><input id="n4_area" type="range" min="0" max="120" step="12" value="60"></label>
+<div class="figure"><svg id="area_svg" viewBox="0 0 360 174" role="img" aria-label="四颗 macro 的原始面积与两级预留面积的堆叠条形图"></svg><figcaption class="caption">深灰绿是 macro 原面积，浅绿来自 B1，橙色来自 N4。数字是临时计入的总面积。</figcaption></div>
+<p class="answer" id="area_note" aria-live="polite"></p>
+<p>如果先把 B1 的面积均分给两个子模块，再让两个模块各自往下分，只有一颗 SRAM 的 N7 就会独得一半。论文按<strong>后代 macro 的颗数</strong>均摊，所以 N7 只分到四分之一。这个差别会落到每颗 macro 的临时占地上。</p>
+<details><summary>为什么这和拥塞有关？</summary><p>几颗 macro 可能围着同一批标准单元。先把 macro 挤得很紧，后面的标准单元摆放就可能把逻辑挤进小缝，或推远到需要长线连接的位置。作者用临时放大的占地预留空间。面积均摊是一个几何估计，真正的 overflow 仍由后续布线衡量。</p></details></section>
+<section class="part" id="groups" hidden><div class="ref">§ III-B · 公式 1</div><h2>哪两组值得先合并？</h2><p class="lead">起初一颗 macro 就是一组。作者采用 best-choice 聚类，用两道硬条件限制谁能合，用四项分数比较合格的候选。合并后，接下来比较的对象就变成了新组。</p>
+<h3>先看资格</h3><p>原文实验要求共同层数 <code>H &gt; 2</code>，两组的合计面积 <code>&lt; 0.3 × 允许摆放面积</code>。例如 s0 与 s1 共享 <code>A3/B1/N4</code>，H 为 3；s0 与 s3 只共享 <code>A3/B1</code>，H 为 2，恰好卡在门槛外。虚设的根节点不计层数。</p>
+<h3>再比较分数</h3><div class="formula">φ = 0.2 / ΔD + 0.3 H<br>　 + 0.3 C + 0.2 / (ΔA + 1)</div>
+<p>ΔD 是初始摆放中两组几何中心的距离，越近得分越高。H 是实例路径开头连续相同的层数。C 是组间连接数，连接越多得分越高。ΔA 是两组面积的差的绝对值，越相似得分越高。这里使用论文实验的权重。</p>
+<div class="example"><h3>试算第一轮</h3><p class="small" id="sizes_note"></p><p class="small">初始中心放在同一直线，坐标分别为 0、4、10、2。调整下面两个输入，观察哪一对有资格且得分最高。</p>
+<label class="slider">s0 与 s2 的连接数 C <output class="readout" for="c02" id="c_out">3</output><input id="c02" type="range" min="0" max="5" step="1" value="3"></label>
+<label>允许摆放面积 <select class="smallselect" id="limit"><option value="600">600（门槛 180）</option><option value="450">450（门槛 135）</option></select></label>
+<table aria-label="六对 macro 的合组得分和资格"><thead><tr><th>组对</th><th>H</th><th>C</th><th>面积和</th><th>得分 φ</th><th>结果</th></tr></thead><tbody id="pairs"></tbody></table>
+<p id="merge_note" class="answer" aria-live="polite"></p><div class="figure"><svg id="group_svg" viewBox="0 0 360 82" role="img" aria-label="完成合并后的分组结果"></svg><figcaption class="caption">最终每个框是一组。框内的 macro 在后续仍逐颗摆放。</figcaption></div></div>
+<details><summary>跟算一次，为什么近的候选也可能输？</summary><p>取默认 C = 3。s0 与 s1 距离 4、面积相同、有 2 条连接，得分为 0.05 + 0.90 + 0.60 + 0.20 = 1.75。s0 与 s2 距离 10、面积差 4、有 3 条连接，得分为 0.02 + 0.90 + 0.90 + 0.04 = 1.86。多一条连接足以抵消另外两项的损失。把滑块调到 2，就能看到首选改变。</p></details>
+<details><summary>这里的数字能当作工业设计参数吗？</summary><p>权重与严格不等号出自原文。演示用任意一致的面积和距离单位，并明确用临时占地计算面积项。原文这一节没有完整规定输入归一化、中心重合时的数值保护或候选分数平局时的处理。算例用于理解排序，不能据此复算作者的工业案例。</p></details></section>
+<section class="part" id="flow" hidden><div class="ref">§ VII-A / C / D · 图 8、9</div><h2>把已经分好的组放回数据流图</h2><p class="lead">到第 III 节结束，工具已经知道组成员。再读设计者给的约束时，工具可以按实例归属把 macro 组对应到 DFG 的模块节点。一个模块里可以有多个组。</p>
+<div class="figure"><svg id="flow_svg" viewBox="0 0 360 210" role="img" aria-label="模块 N1 经 N4 或 N5 向 N7 传输数据，N4 与 N7 中标有算例生成的组"></svg><figcaption class="caption">实线箭头采用论文图 8(b) 的局部关系；N4、N7 内嵌的是本课上一步的组。</figcaption></div>
+<p class="answer" id="flow_note"></p>
+<h3>第一次用在分区</h3><p>假设 N4 的一组在左区，N7 的一组在右区。算法可以给组对加一条加权的虚拟连线，权重包含共同层次和 DFG 关系。左右各换一组时，同时衡量真实信号线的切割数变化和虚拟连线代价的变化。于是，设计者给的 N4 → N7 会实际影响哪个组分到哪边。</p>
+<p>N4、N5 之间也很有意思。图中它们都从 N1 接数据，又都送往 N7。论文把这种<strong>共同直接上游且共同直接下游</strong>的关系也纳入评分，即使两者之间没有直接数据流。一个节点对应许多组时，关系权重按组对数摊分，避免组数多就被重复强调。</p>
+<h3>第二次用在摆放顺序</h3><p>排到属于某个 DFG 节点的组，就从那个节点按广度优先遍历，把访问到的节点对应的组加入摆放队列。这次遍历把边视为双向。从 N4 出发，上游 N1 和下游 N7 都是一步邻居。随后才由合法化算法逐颗找坐标。</p>
+<details><summary>换一个问题自测：若只有实例名，能走到哪？</summary><p>有 macro 和标准单元的实例名，可以建层次树；加上单元面积，可以做预留；再有初始位置、面积和连接数，就能按第 III 节评价候选组对。要使用第 VII 节的 N4 → N7，还需设计者给出模块级数据流约束。连接数 C 只是数量，两个方向相反的设计可以得到相同的 C。</p></details></section>
+<div class="panelnav"><button type="button" id="prev">← 上一步</button><span id="folio" class="folio"></span><button type="button" class="next" id="next">下一步 →</button></div>
+<footer class="sources">依据 Lin 等，IEEE TVLSI，2021，pp. 973–984。层次树和合组见 pp. 975–976，DFG 与分区、排序见 pp. 978–980。图形均为教学重绘。<a href="https://doi.org/10.1109/TVLSI.2021.3057921">查阅原文 ↗</a></footer>
+</div></div></main>
+<script>
+'use strict';
+const el = id => document.getElementById(id);
+const pages = [...document.querySelectorAll('.part')];
+const tabs = [...document.querySelectorAll('.steps a')];
+const directions = [...document.querySelectorAll('[data-dir]')];
+function render_page(scroll) {
+  let index = pages.findIndex(page => '#' + page.id === location.hash);
+  if (index < 0) index = 0;
+  pages.forEach((page, i) => {page.hidden = i !== index;});
+  tabs.forEach((tab,i) => {if(i === index) tab.setAttribute('aria-current','step'); else tab.removeAttribute('aria-current');});
+  el('prev').disabled = index === 0;
+  el('next').textContent = index === pages.length-1 ? '回到开头 ↺' : '下一步 →';
+  el('folio').textContent = (index+1) + ' / ' + pages.length;
+  if(scroll) document.querySelector('.layout').scrollIntoView({block:'start'});
+}
+function move(delta) {
+  const current=pages.findIndex(page=>!page.hidden);
+  location.hash=pages[(current+delta+pages.length)%pages.length].id;
+}
+el('prev').onclick=()=>move(-1); el('next').onclick=()=>move(1);
+window.addEventListener('hashchange',()=>render_page(true));
+function direction(reverse) {
+  el('direction_tip').setAttribute('d', reverse?'M115 135l10 -6v12z':'M245 135l-10 -6v12z');
+  el('direction_note').textContent=reverse?'假设改由 N7 给 N4 送数据。上面两条实例名仍然成立：层次归属相同，数据方向可以相反。':'在设计者给的关系里，N4 向 N7 送数据。试着反转箭头，再看看哪一条实例名需要修改。';
+  directions.forEach(b=>b.setAttribute('aria-pressed',String((b.dataset.dir==='reverse')===reverse)));
+}
+directions.forEach(b=>b.onclick=()=>direction(b.dataset.dir==='reverse'));
+const label=(x,y,content,cls='name')=>'<text x="'+x+'" y="'+y+'" text-anchor="middle" class="'+cls+'">'+content+'</text>';
+function box(x,y,w,title,cls='node'){
+  return '<rect x="'+(x-w/2)+'" y="'+y+'" width="'+w+'" height="31" rx="5" class="'+cls+'"/>'+label(x,y+21,title);
+}
+const tree_steps=[
+  ['s0','先读 A3/B1/N4/s0。根下面依次建立 A3、B1、N4，最后把 s0 记为叶子。'],
+  ['s1、s2','再读 A3/B1/N4/s1 和 A3/B1/N4/s2。A3、B1、N4 全部复用，只增加两个叶子。'],
+  ['s3','读 A3/B1/N7/s3。走到 B1 后才分叉，新增 N7 和叶子 s3。现在树的形状已经确定。'],
+  ['N4 的单元','假设 A3/B1/N4/logic 下有一批标准单元，合计面积 60。走到 N4 后找不到 logic，面积就归到最深匹配节点 N4。'],
+  ['B1 的单元','另一批单元来自 A3/B1/bus，面积共 40。bus 这一支没有 macro，路径在 B1 停下。面积 40 记到 B1，稍后由它下面的四颗 SRAM 均分。']
+];
+function draw_tree(step){
+  const group=(min,html)=>'<g'+(step<min?' class="inactive"':'')+'>'+html+'</g>';
+  const line=(path)=>'<path class="wire" d="'+path+'"/>';
+  const badge=(x,y,txt)=>'<rect class="cell" x="'+x+'" y="'+y+'" width="68" height="23" rx="10"/>'+label(x+34,y+16,txt,'tiny');
+  el('tree_svg').innerHTML=label(55,17,'设计根','tiny')+line('M55 21V37H127')+box(160,22,62,'A3')+line('M160 53V71')+box(160,71,62,'B1')+
+    line('M160 102V116H98V132')+box(98,132,60,'N4')+line('M98 163V177H35V192')+box(35,192,55,'s0','macro')+
+    group(1,line('M98 163V192M98 177H161V192')+box(98,192,55,'s1','macro')+box(161,192,55,'s2','macro'))+
+    group(2,line('M160 116H281V132')+box(281,132,60,'N7')+line('M281 163V192')+box(281,192,55,'s3','macro'))+
+    (step>=3?badge(139,136,'面积 60'):'')+(step>=4?badge(202,75,'面积 40'):'');
+  el('tree_note').textContent=tree_steps[step][1];
+  [...el('tree_controls').children].forEach((btn,i)=>btn.setAttribute('aria-pressed',String(i===step)));
+}
+tree_steps.forEach(([name],i)=>{const btn=document.createElement('button');btn.textContent=name;btn.onclick=()=>draw_tree(i);el('tree_controls').append(btn);});
+const original=[40,40,36,40];
+function draw_area(){
+  const total=Number(el('n4_area').value), share=total/3;
+  el('n4_out').value=total;
+  el('area_svg').innerHTML=original.map((size,i)=>{
+    const parts=[size,10,i<3?share:0], y=10+i*42;
+    let x=45;
+    const bars=parts.map((v,k)=>{const width=v*2.5;const rect='<rect x="'+x+'" y="'+y+'" width="'+width+'" height="25" fill="'+['#435e58','#a6d5bd','#e9a868'][k]+'"/>';x+=width;return rect;}).join('');
+    return label(21,y+18,'s'+i)+bars+label(x+17,y+18,parts.reduce((a,b)=>a+b,0),'name');
+  }).join('');
+  el('area_note').textContent='s0 的临时占地 = 40 + 40/4 + '+total+'/3 = '+(50+share)+'。s3 只从 B1 分到 10，始终是 50。四颗的预留面积合计 '+(40+total)+'，恰好用完两个节点提供的面积。';
+}
+el('n4_area').oninput=()=>{draw_area();draw_groups();};
+const positions=[0,4,10,2];
+function draw_groups(){
+  const c02=Number(el('c02').value), capacity=Number(el('limit').value)*0.3;
+  const n4_area=Number(el('n4_area').value);
+  const sizes=original.map((size,i)=>size+10+(i<3?n4_area/3:0));
+  el('sizes_note').textContent='沿用上一页的面积预留。当前 N4 的标准单元面积为 '+n4_area+'，四颗 SRAM 的临时占地依次为 '+sizes.join('、')+'。';
+  const connection=[2,c02,6,1,0,0], pairs=[];
+  for(let a=0;a<4;a++)for(let b=a+1;b<4;b++){
+    const h=b===3?2:3, c=connection[pairs.length], area=sizes[a]+sizes[b];
+    const score=.2/Math.abs(positions[a]-positions[b])+.3*h+.3*c+.2/(Math.abs(sizes[a]-sizes[b])+1);
+    pairs.push({a,b,h,c,area,score,legal:h>2 && area<capacity});
+  }
+  const best=pairs.filter(p=>p.legal).sort((u,v)=>v.score-u.score)[0];
+  el('c_out').value=c02;
+  el('pairs').innerHTML=pairs.map(p=>{
+    const status=p.h<=2?'层次浅':p.area>=capacity?'超面积':p===best?'首选':'合格';
+    return '<tr class="'+(p===best?'chosen':'')+'"><td>s'+p.a+'·s'+p.b+'</td><td>'+p.h+'</td><td>'+p.c+'</td><td>'+p.area+'</td><td>'+p.score.toFixed(2)+'</td><td class="'+(p.legal?'':'denied')+'">'+status+'</td></tr>';
+  }).join('');
+  let groups=best?[[best.a,best.b],...[0,1,2,3].filter(i=>i!==best.a && i!==best.b).map(i=>[i])]:[[0],[1],[2],[3]];
+  const n4_sum=sizes[0]+sizes[1]+sizes[2];
+  let note;
+  if(!best){
+    note='本轮没有合格组对。N4 内最小的两颗合计 '+(sizes[0]+sizes[2])+'，已达到或超过门槛 '+capacity+'；跨到 N7 的组对又通不过层次门槛。四颗各自保留一组。';
+  }else{
+    note='先合并 s'+best.a+'·s'+best.b+'。再并入 N4 剩下的那颗，合计面积为 '+n4_sum+'。';
+    if(n4_sum<capacity){
+      groups=[[0,1,2],[3]];
+      note+='仍低于门槛 '+capacity+'，三颗可以组成一组。';
+    }else{
+      note+='达到或超过门槛 '+capacity+'，因此 N4 留下两个组。';
+    }
+    note+='s3 与它们只共享两层，始终单独成组。';
+  }
+  const titles=groups.map(g=>g.map(i=>'s'+i).join('·'));
+  el('merge_note').textContent=note;
+  el('group_svg').innerHTML=groups.map((g,i)=>{const x=(i+.5)*360/groups.length;return label(x,23,'组 '+(i+1),'tiny')+box(x,34,groups.length===4?70:92,titles[i],'macro');}).join('');
+  draw_flow(groups);
+}
+function draw_flow(groups){
+  const n4=groups.filter(g=>g[0]!==3).map(g=>g.map(i=>'s'+i).join('·'));
+  const arrow=(d)=>'<path d="'+d+'" class="activewire" marker-end="url(#arrowhead)"/>';
+  const node=(x,y,w,h,title,sub)=>'<rect class="macro" x="'+(x-w/2)+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="7"/>'+label(x,y+20,title)+(sub?label(x,y+42,sub,'tiny'):'');
+  el('flow_svg').innerHTML='<defs><marker id="arrowhead" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path fill="#00695e" d="M0 0L8 4L0 8Z"/></marker></defs>'+
+  arrow('M169 38L101 79')+arrow('M191 38L260 79')+arrow('M98 135L164 168')+arrow('M260 135L195 168')+
+  box(180,7,66,'N1')+node(88,79,162,55,'N4',n4.join(' ／ '))+node(271,79,98,55,'N5','并行支路')+node(180,165,98,44,'N7','s3');
+  el('flow_note').textContent='N4 里有 '+n4.length+' 个组（'+n4.join('、')+'），N7 里有 s3 这一组。N4 → N7 这条模块关系因此可以分配到 '+n4.length+' 对跨模块的组。';
+}
+el('c02').oninput=draw_groups;el('limit').onchange=draw_groups;
+direction(false);draw_tree(0);draw_area();draw_groups();render_page(false);
+</script></body></html>
