@@ -19,7 +19,7 @@ table{border-collapse:collapse;width:100%;margin:10px 0;text-align:left;font-siz
 <main class="frame">
 <div class="intro"><div><h1>Macro 怎么分组？</h1><p>从四颗 SRAM 的实例名出发，看层次树如何帮标准单元留地方，哪些 macro 最终能合组，以及数据流从哪里进入摆放。</p></div><div class="route"><strong>《Dataflow-Aware Macro Placement》精读</strong>第 III 节 · Macro Grouping<br>延伸至第 VII 节 · Dataflow</div></div>
 <div class="layout"><nav class="steps" aria-label="课程步骤">
-<a href="#inputs"><i>01</i>输入</a><a href="#tree"><i>02</i>建树</a><a href="#area"><i>03</i>分面积</a><a href="#groups"><i>04</i>合组</a><a href="#flow"><i>05</i>用数据流</a></nav>
+<a href="#inputs"><i>01</i>输入</a><a href="#tree"><i>02</i>建树</a><a href="#area"><i>03</i>分面积</a><a href="#groups"><i>04</i>合组</a><a href="#fig5"><i>05</i>切区域</a><a href="#flow"><i>06</i>用数据流</a></nav>
 <div class="sheet">
 <section class="part" id="inputs"><div class="ref">§ III → § VII</div><h2>工具从哪里知道数据往哪走？</h2><p class="lead">作者明确写的是，电路设计者提供 dataflow constraint，摆放工具据此建数据流图（DFG）。论文给出了如何使用这份约束；它的文件格式和设计者生成它的过程，文中没有交代。</p>
 <div class="figure"><svg viewBox="0 0 360 165" role="img" aria-label="相同层次实例名与两种假设的数据方向"><text x="20" y="24" class="tiny">来自 Verilog 的层次路径</text><text x="20" y="50" class="name">A3/B1/N4/s0</text><text x="20" y="73" class="name">A3/B1/N7/s3</text><path class="wire" d="M20 87H340"/><text x="20" y="108" class="tiny">另行提供的模块级约束</text><rect class="macro" x="45" y="117" width="64" height="35" rx="5"/><rect class="macro" x="251" y="117" width="64" height="35" rx="5"/><text class="name" x="77" y="140" text-anchor="middle">N4</text><text class="name" x="283" y="140" text-anchor="middle">N7</text><path class="activewire" d="M115 135H245"/><path id="direction_tip" fill="#00695e" d="M245 135l-10 -6v12z"/></svg>
@@ -49,6 +49,21 @@ table{border-collapse:collapse;width:100%;margin:10px 0;text-align:left;font-siz
 <p id="merge_note" class="answer" aria-live="polite"></p><div class="figure"><svg id="group_svg" viewBox="0 0 360 82" role="img" aria-label="完成合并后的分组结果"></svg><figcaption class="caption">最终每个框是一组。框内的 macro 在后续仍逐颗摆放。</figcaption></div></div>
 <details><summary>跟算一次，为什么近的候选也可能输？</summary><p>取默认 C = 3。s0 与 s1 距离 4、面积相同、有 2 条连接，得分为 0.05 + 0.90 + 0.60 + 0.20 = 1.75。s0 与 s2 距离 10、面积差 4、有 3 条连接，得分为 0.02 + 0.90 + 0.90 + 0.04 = 1.86。多一条连接足以抵消另外两项的损失。把滑块调到 2，就能看到首选改变。</p></details>
 <details><summary>这里的数字能当作工业设计参数吗？</summary><p>权重与严格不等号出自原文。演示用任意一致的面积和距离单位，并明确用临时占地计算面积项。原文这一节没有完整规定输入归一化、中心重合时的数值保护或候选分数平局时的处理。算例用于理解排序，不能据此复算作者的工业案例。</p></details></section>
+<section class="part" id="fig5" hidden><div class="ref">§ IV · 图 5</div><h2>分好上下两批，再决定各给多少空地</h2>
+<p class="lead">上一步得到了一批 macro 组。现在看第 IV 节的一次水平分区。图 5 单独拿候选切线 ℓ₄ 做例子。左图把组别、空地统计和两条线叠在一起；我们按出现的顺序一层层看。</p>
+<div id="cut_steps" class="controls" aria-label="图 5 分步讲解"><button type="button" data-step="0">① 分两批</button><button type="button" data-step="1">② 数空地</button><button type="button" data-step="2">③ 移边界</button></div>
+<div class="figure"><svg id="cut_svg" viewBox="0 0 350 190" role="img" aria-label="图 5 的当前步骤"></svg><p id="cut_caption" class="caption"></p></div>
+<div id="cut_trials" class="controls" hidden aria-label="比较条带边界"><button type="button" data-s="1">切在 s₁ 后</button><button type="button" data-s="2">切在 s₂ 后</button><button type="button" data-s="3">切在 s₃ 后</button></div>
+<p id="cut_note" class="answer" aria-live="polite"></p>
+<details><summary>右图 5(b) 那棵树到底在查什么？</summary>
+<p>水平条带从下往上累加。切在 s₁ 后，下边拿到 5；在 s₂ 后是 5 + 10 = 15；在 s₃ 后是 35；到 s₄ 顶端就是全部 40。这四个累计值按大小排成一棵平衡搜索树，方便对每条候选切线反复查找。</p>
+<div class="figure"><svg viewBox="0 0 350 142" role="img" aria-label="搜索树，从根节点 s3 的 35 到左子节点 s2 的 15，其他节点为 s1 的 5 和 s4 的 40"><path d="M173 34L94 62" class="activewire"/><path d="M179 34L264 62 M87 87L46 110" class="wire"/>
+<rect x="138" y="5" width="74" height="30" rx="4" class="node"/><text x="175" y="26" text-anchor="middle" class="name">s₃ · 35</text>
+<rect x="51" y="60" width="74" height="30" rx="4" class="macro"/><text x="88" y="80" text-anchor="middle" class="name">s₂ · 15</text>
+<rect x="231" y="60" width="74" height="30" rx="4" class="node"/><text x="268" y="80" text-anchor="middle" class="name">s₄ · 40</text>
+<rect x="9" y="108" width="70" height="30" rx="4" class="node"/><text x="44" y="128" text-anchor="middle" class="name">s₁ · 5</text></svg></div>
+<p>下边有 10 的 macro，上边有 16。若两侧一样满，下边理想的可用面积就是 40 × 10 / (10 + 16) ≈ 15.38。从树根看到 35，目标更小，往左查到 15。用 15 给下边、25 给上边，利用率已经很接近。图 5(b) 的节点记录<strong>条带及其累计空地</strong>；第 III 节图 4 的树才记录设计层次。</p></details>
+<details><summary>原图的线和颜色怎么认？</summary><p>灰色块是上批，浅蓝色块是下批，块上的 g 表示一个 macro 组。原图紫色虚线 ℓ₄ 给出候选分法，紫色实线 ℓ′₄ 是给这份分法配出的新区域边界。两条线的间距就是 D<sub>Shift</sub>，会计入公式 2。蓝色折线表示层次虚拟连线。图 5 只演示怎样为 ℓ₄ 找新边界，算法还要比较其他候选切线的代价。</p></details></section>
 <section class="part" id="flow" hidden><div class="ref">§ VII-A / C / D · 图 8、9</div><h2>把已经分好的组放回数据流图</h2><p class="lead">到第 III 节结束，工具已经知道组成员。再读设计者给的约束时，工具可以按实例归属把 macro 组对应到 DFG 的模块节点。一个模块里可以有多个组。</p>
 <div class="figure"><svg id="flow_svg" viewBox="0 0 360 210" role="img" aria-label="模块 N1 经 N4 或 N5 向 N7 传输数据，N4 与 N7 中标有算例生成的组"></svg><figcaption class="caption">实线箭头采用论文图 8(b) 的局部关系；N4、N7 内嵌的是本课上一步的组。</figcaption></div>
 <p class="answer" id="flow_note"></p>
@@ -57,7 +72,7 @@ table{border-collapse:collapse;width:100%;margin:10px 0;text-align:left;font-siz
 <h3>第二次用在摆放顺序</h3><p>排到属于某个 DFG 节点的组，就从那个节点按广度优先遍历，把访问到的节点对应的组加入摆放队列。这次遍历把边视为双向。从 N4 出发，上游 N1 和下游 N7 都是一步邻居。随后才由合法化算法逐颗找坐标。</p>
 <details><summary>换一个问题自测：若只有实例名，能走到哪？</summary><p>有 macro 和标准单元的实例名，可以建层次树；加上单元面积，可以做预留；再有初始位置、面积和连接数，就能按第 III 节评价候选组对。要使用第 VII 节的 N4 → N7，还需设计者给出模块级数据流约束。连接数 C 只是数量，两个方向相反的设计可以得到相同的 C。</p></details></section>
 <div class="panelnav"><button type="button" id="prev">← 上一步</button><span id="folio" class="folio"></span><button type="button" class="next" id="next">下一步 →</button></div>
-<footer class="sources">依据 Lin 等，IEEE TVLSI，2021，pp. 973–984。层次树和合组见 pp. 975–976，DFG 与分区、排序见 pp. 978–980。图形均为教学重绘。<a href="https://doi.org/10.1109/TVLSI.2021.3057921">查阅原文 ↗</a></footer>
+<footer class="sources">依据 Lin 等，IEEE TVLSI，2021，pp. 973–984。层次树和合组见 pp. 975–976，分区切线见 pp. 976–977，DFG 与排序见 pp. 978–980。图形均为教学重绘。<a href="https://doi.org/10.1109/TVLSI.2021.3057921">查阅原文 ↗</a></footer>
 </div></div></main>
 <script>
 'use strict';
@@ -172,5 +187,49 @@ function draw_flow(groups){
   el('flow_note').textContent='N4 里有 '+n4.length+' 个组（'+n4.join('、')+'），N7 里有 s3 这一组。N4 → N7 这条模块关系因此可以分配到 '+n4.length+' 对跨模块的组。';
 }
 el('c02').oninput=draw_groups;el('limit').onchange=draw_groups;
-direction(false);draw_tree(0);draw_area();draw_groups();render_page(false);
+const stripe_areas=[5,10,20,5];
+const stripe_subscripts=['₁','₂','₃','₄'];
+function draw_cut(step, after=2){
+  const svg=el('cut_svg'), note=el('cut_note'), caption=el('cut_caption');
+  document.querySelectorAll('#cut_steps button').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.step)===step)));
+  document.querySelectorAll('#cut_trials button').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.s)===after)));
+  el('cut_trials').hidden=step!==2;
+  if(step===0){
+    svg.innerHTML=label(175,22,'候选切线 ℓ₄ 对应的两批组','tiny')+
+      [0,1,2,3].map(i=>box(49+i*83,39,57,'g'+(i+1))).join('')+
+      label(175,89,'上批 · macro 组的面积合计 16','tiny')+
+      '<path d="M12 98H338" stroke="#715492" stroke-width="2.5" stroke-dasharray="7 4"/>'+
+      [0,1,2,3].map(i=>box(49+i*83,111,57,'g'+(i+5),'macro')).join('')+
+      label(175,166,'下批 · macro 组的面积合计 10','tiny');
+    caption.textContent='按原图颜色归类后展开。这里的方块只标组别，大小和坐标均为示意。';
+    note.textContent='假定采用候选 ℓ₄。下边要安置总面积 10 的那批，上边要安置总面积 16 的那批。先记住这两个需求，接下来只调整两边分到的地方。';
+    svg.setAttribute('aria-label','上批 g1 到 g4 面积合计 16，下批 g5 到 g8 面积合计 10');
+    return;
+  }
+  const baseline=164, height=34;
+  const bottom=stripe_areas.slice(0,after).reduce((sum,v)=>sum+v,0), top=40-bottom;
+  const bottom_pct=(100*10/bottom).toFixed(1), top_pct=(100*16/top).toFixed(1);
+  let body=label(173,17,'每条带的可用面积','tiny');
+  stripe_areas.forEach((area,i)=>{
+    const y=baseline-(i+1)*height;
+    const fill=step===2 && i<after?'#c4e5d7':'#e6e9e0';
+    body+='<rect x="54" y="'+y+'" width="197" height="'+height+'" fill="'+fill+'" stroke="#98ada3"/>'+
+      label(31,y+22,'s'+stripe_subscripts[i])+label(153,y+22,String(area));
+  });
+  if(step===2){
+    const y=baseline-after*height;
+    body+='<path d="M45 '+y+'H258" stroke="#914721" stroke-width="3"/>'+label(294,y+5,'试切线','tiny');
+    note.textContent='下边利用率 10 / '+bottom+' = '+bottom_pct+'%，上边利用率 16 / '+top+' = '+top_pct+'%。'+
+      (after===2?'两边都用了约三分之二，所以论文给 ℓ₄ 选 s₂ 对应的边界作为 ℓ′₄。':after===1?'下边的需求超过可用面积。试试把边界上移。':'上边只剩 5，要装 16，边界切得太高。');
+    caption.textContent='绿色条带归下区，灰色条带归上区。点击条带按钮，比较三个内部边界。';
+  }else{
+    note.textContent='从下往上，四条带各有 5、10、20、5 的可用面积，合计 40。条带一样高，可用面积却不同。如果下边拿前两条，它就有 5 + 10 = 15，上边剩 20 + 5 = 25。';
+    caption.textContent='左边的 s₁ 到 s₄ 是等高条带。中间数字是各条带扣除占用后可供摆放的面积。';
+  }
+  svg.innerHTML=body;
+  svg.setAttribute('aria-label',step===1?'四条带由下向上的可用面积依次是 5、10、20、5':'下区可用面积 '+bottom+'，上区可用面积 '+top);
+}
+document.querySelectorAll('#cut_steps button').forEach(b=>b.onclick=()=>draw_cut(Number(b.dataset.step)));
+document.querySelectorAll('#cut_trials button').forEach(b=>b.onclick=()=>draw_cut(2,Number(b.dataset.s)));
+direction(false);draw_tree(0);draw_area();draw_groups();draw_cut(0);render_page(false);
 </script></body></html>
